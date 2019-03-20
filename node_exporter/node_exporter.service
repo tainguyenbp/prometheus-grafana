@@ -1,0 +1,20 @@
+[Unit]
+Description=Node Exporter Metrics Monitors
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=node_exporter
+Group=node_exporter
+
+ExecStart=/etc/node_exporter/node_exporter \
+    --collector.loadavg \
+    --collector.meminfo \
+    --collector.filesystem \
+
+
+[Install]
+WantedBy=multi-user.target
