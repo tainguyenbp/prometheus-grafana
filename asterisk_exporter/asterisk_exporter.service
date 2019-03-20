@@ -1,0 +1,16 @@
+[Unit]
+Description=Asterisk exporter metrics monitor calls
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=root
+Group=root
+
+ExecStart=/etc/asterisk_exporter/asterisk_exporter.py
+
+[Install]
+WantedBy=multi-user.target
