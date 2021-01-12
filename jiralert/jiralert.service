@@ -1,0 +1,16 @@
+[Unit]
+Description=jiralert Metrics Monitors
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=jiralert
+Group=jiralert
+
+ExecStart=/etc/jiralert/jiralert -config /etc/jiralert/config/jiralert.yml -log.level debug
+
+[Install]
+WantedBy=multi-user.target
