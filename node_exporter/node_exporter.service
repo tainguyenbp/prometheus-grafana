@@ -14,7 +14,7 @@ ExecStart=/etc/node_exporter/node_exporter \
     --collector.loadavg \
     --collector.meminfo \
     --collector.filesystem \
-
+    --collector.systemd
 
 [Install]
 WantedBy=multi-user.target
