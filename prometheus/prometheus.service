@@ -1,0 +1,25 @@
+[Unit]
+Description=Prometheus Server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=prometheus
+Group=prometheus
+
+ExecStart=/etc/prometheus/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml \
+    --storage.tsdb.path=/etc/prometheus/data/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries \
+    --web.external-url=http://192.168.10.10:9090 \
+    --web.enable-admin-api \
+    --web.enable-lifecycle \
+    --storage.tsdb.retention.time=120d \
+    --log.level=debug
+
+[Install]
+WantedBy=multi-user.target
