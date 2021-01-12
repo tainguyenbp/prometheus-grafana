@@ -1,51 +1,48 @@
 #!/bin/bash
+
 yum install -y wget
 
-export version_node_exporter='1.0.1'
-export arch_node_exporter='linux-amd64'
+export version_blackbox_exporter='1.0.1'
+export arch_blackbox_exporter='linux-amd64'
 
+useradd --no-create-home --shell /bin/false blackbox_exporter
 
-useradd --no-create-home --shell /bin/false node_exporter
+wget "https://github.com/prometheus/blackbox_exporter/releases/download/v$version_blackbox/blackbox_exporter-$version_blackbox.$arch_blackbox.tar.gz" -O /etc/blackbox_exporter/blackbox_exporter.tar.gz
 
-wget "https://github.com/prometheus/node_exporter/releases/download/v$version_node_exporter/node_exporter-$version_node_exporter.$arch_node_exporter.tar.gz" -O /etc/node_exporter.tar.gz
+tar -xzvf /etc/blackbox_exporter.tar.gz -C /etc/
 
-tar -xzvf /etc/node_exporter.tar.gz -C /etc/
+mv "/etc/blackbox_exporter-$version_blackbox_exporter.$arch_blackbox_exporter" /etc/blackbox_exporter
 
-mv "/etc/node_exporter-$version_node_exporter.$arch_node_exporter" /etc/node_exporter
+chown -R blackbox_exporter:blackbox_exporter /etc/blackbox_exporter
 
-chown -R node_exporter:node_exporter /etc/node_exporter
+chmod +x /etc/blackbox_exporter/blackbox_exporter
 
-chmod +x /etc/node_exporter/node_exporter
-
-cat << EOF > /etc/systemd/system/node_exporter.service
+cat << EOF > /etc/systemd/system/blackbox_exporter.service
 [Unit]
-Description=Node Exporter Metrics Monitors
+Description=Blackbox Exporter
 Wants=network-online.target
 After=network-online.target
 
 [Service]
-
+User=blackbox_exporter
+Group=blackbox_exporter
 Type=simple
-
-User=node_exporter
-Group=node_exporter
-
-ExecStart=/etc/node_exporter/node_exporter \
-    --collector.loadavg \
-    --collector.meminfo \
-    --collector.filesystem \
-    --collector.systemd
+ExecStart=/etc/blackbox_exporter/blackbox_exporter --config.file /etc/blackbox_exporter/blackbox.yml --log.level=debug
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-chmod +x /etc/systemd/system/node_exporter.service
+chmod +x /etc/systemd/system/blackbox_exporter.service
 
-systemctl enable node_exporter.service
+systemctl enable blackbox_exporter.service
 
-systemctl start node_exporter.service
+systemctl start blackbox_exporter.service
 
-systemctl status node_exporter.service
+systemctl status blackbox_exporter.service
 
-rm -rf /etc/node_exporter.tar.gz
+rm -rf /etc/blackbox_exporter.tar.gz
