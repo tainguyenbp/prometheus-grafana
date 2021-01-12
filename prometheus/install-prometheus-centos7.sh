@@ -1,25 +1,24 @@
 #!/bin/bash
 yum install -y wget
 
-export version_node_exporter='1.0.1'
-export arch_node_exporter='linux-amd64'
+export version_prometheus='2.24.0'
+export arch_prometheus='linux-amd64'
 
+useradd --no-create-home --shell /bin/false prometheus
 
-useradd --no-create-home --shell /bin/false node_exporter
+wget "https://github.com/prometheus/prometheus/releases/download/v$version_prometheus/prometheus-$version_prometheus.$arch_prometheus.tar.gz" -O /etc/prometheus/prometheus.tar.gz
 
-wget "https://github.com/prometheus/node_exporter/releases/download/v$version_node_exporter/node_exporter-$version_node_exporter.$arch_node_exporter.tar.gz" -O /etc/node_exporter.tar.gz
+tar -xzvf /etc/prometheus.tar.gz -C /etc/
 
-tar -xzvf /etc/node_exporter.tar.gz -C /etc/
+mv "/etc/prometheus-$version_prometheus.$arch_prometheus" /etc/prometheus
 
-mv "/etc/node_exporter-$version_node_exporter.$arch_node_exporter" /etc/node_exporter
+chown -R prometheus:prometheus /etc/prometheus
 
-chown -R node_exporter:node_exporter /etc/node_exporter
+chmod +x /etc/prometheus/prometheus
 
-chmod +x /etc/node_exporter/node_exporter
-
-cat << EOF > /etc/systemd/system/node_exporter.service
+cat << EOF > /etc/systemd/system/prometheus.service
 [Unit]
-Description=Node Exporter Metrics Monitors
+Description=Prometheus Server
 Wants=network-online.target
 After=network-online.target
 
@@ -27,25 +26,31 @@ After=network-online.target
 
 Type=simple
 
-User=node_exporter
-Group=node_exporter
+User=prometheus
+Group=prometheus
 
-ExecStart=/etc/node_exporter/node_exporter \
-    --collector.loadavg \
-    --collector.meminfo \
-    --collector.filesystem \
-    --collector.systemd
+ExecStart=/etc/prometheus/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml \
+    --storage.tsdb.path=/etc/prometheus/data/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries \
+    --web.external-url=http://192.168.10.10:9090 \
+    --web.enable-admin-api \
+    --web.enable-lifecycle \
+    --storage.tsdb.retention.time=120d \
+    --log.level=debug
 
 [Install]
 WantedBy=multi-user.target
+
 EOF
 
-chmod +x /etc/systemd/system/node_exporter.service
+chmod +x /etc/systemd/system/prometheus.service
 
-systemctl enable node_exporter.service
+systemctl enable prometheus.service
 
-systemctl start node_exporter.service
+systemctl start prometheus.service
 
-systemctl status node_exporter.service
+systemctl status prometheus.service
 
-rm -rf /etc/node_exporter.tar.gz
+rm -rf /etc/prometheus.tar.gz
