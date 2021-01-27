@@ -1,0 +1,17 @@
+version: '2'
+services:
+  vmware_exporter:
+    image: pryorda/vmware_exporter:latest
+    container_name: vmware_exporter
+    ports:
+        - "9272:9272"
+    environment:
+        VSPHERE_HOST: "192.168.1.100"
+        VSPHERE_USER: "administrator@vsphere.local"
+        VSPHERE_PASSWORD: "Administrator"
+        VSPHERE_IGNORE_SSL: "True"
+        VSPHERE_COLLECT_VMS: "False"
+        VSPHERE_COLLECT_VMGUESTS: "False"
+    restart: always
+    #FOR DEBUG UNCOMMENT NEXT LINE
+    #command: ["-l","DEBUG"]
