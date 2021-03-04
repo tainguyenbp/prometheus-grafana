@@ -22,6 +22,8 @@ yum install urw-fonts
 
 grafana-cli plugins install alexanderzobnin-zabbix-app
 grafana-cli plugins install camptocamp-prometheus-alertmanager-datasource
+grafana-cli plugins grafana-piechart-panel
+grafana-cli plugins vonage-status-panel
 
 firewall-cmd --zone=public --add-port=3000/tcp --permanent
 firewall-cmd --reload
