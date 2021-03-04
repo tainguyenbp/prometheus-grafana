@@ -1,0 +1,16 @@
+[Unit]
+Description=alertmanager Server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=alertmanager
+Group=alertmanager
+
+ExecStart=/etc/alertmanager/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/etc/alertmanager/data/ --data.retention=120h --web.listen-address=0.0.0.0:9093 --log.level=debug
+
+[Install]
+WantedBy=multi-user.target
