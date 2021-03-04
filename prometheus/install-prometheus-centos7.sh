@@ -4,12 +4,12 @@ yum install -y wget
 export version_prometheus='2.25.0'
 export arch_prometheus='linux-amd64'
 
-
+mkdir -p /etc/prometheus/
 useradd --no-create-home --shell /bin/false prometheus
 
 wget "https://github.com/prometheus/prometheus/releases/download/v$version_prometheus/prometheus-$version_prometheus.$arch_prometheus.tar.gz" -O /etc/prometheus/prometheus.tar.gz
 
-tar -xzvf /etc/prometheus.tar.gz -C /etc/
+tar -xzvf /etc/prometheus/prometheus.tar.gz -C /etc/prometheus/
 
 mv "/etc/prometheus-$version_prometheus.$arch_prometheus" /etc/prometheus
 
