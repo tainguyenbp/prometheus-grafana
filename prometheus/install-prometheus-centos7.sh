@@ -1,8 +1,9 @@
 #!/bin/bash
 yum install -y wget
 
-export version_prometheus='2.24.0'
+export version_prometheus='2.25.0'
 export arch_prometheus='linux-amd64'
+
 
 useradd --no-create-home --shell /bin/false prometheus
 
