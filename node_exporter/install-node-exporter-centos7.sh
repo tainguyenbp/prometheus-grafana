@@ -1,7 +1,7 @@
 #!/bin/bash
 yum install -y wget
 
-export version_node_exporter='1.0.1'
+export version_node_exporter='1.1.1'
 export arch_node_exporter='linux-amd64'
 
 
