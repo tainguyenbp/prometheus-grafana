@@ -1,0 +1,18 @@
+[Unit]
+Description=Dashboard Accelerator for Prometheus and HTTP Reverse Proxy Cache
+
+After=network.target
+
+[Service]
+Type=simple
+User=trickster
+Group=trickster
+
+ExecStart=/etc/trickster/trickster -config /etc/trickster/trickster.conf
+#-log-level debug -origin-type prometheus -origin-url http://127.0.0.1:9090 -metrics-port 8481 -proxy-port 9089
+
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
