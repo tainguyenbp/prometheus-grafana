@@ -49,3 +49,8 @@ systemctl start node_exporter.service
 systemctl status node_exporter.service
 
 rm -rf /etc/node_exporter.tar.gz
+
+
+CREATE USER 'mysqld'@'localhost' IDENTIFIED BY 'mysqld';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld'@'localhost';
+FLUSH PRIVILEGES;
