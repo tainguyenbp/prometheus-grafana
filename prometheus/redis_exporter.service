@@ -1,0 +1,16 @@
+[Unit]
+Description=Redis Exporter Metrics Monitors
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+Type=simple
+
+User=redis_exporter
+Group=redis_exporter
+
+ExecStart=/etc/redis_exporter/redis_exporter
+
+[Install]
+WantedBy=multi-user.target
