@@ -1,0 +1,4 @@
+[client]
+user=exporter
+password=exporter
+socket=/var/lib/mysqld/mysqld.sock
