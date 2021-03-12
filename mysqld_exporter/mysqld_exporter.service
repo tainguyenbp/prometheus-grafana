@@ -1,0 +1,32 @@
+[Unit]
+Description=MySQL Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=mysqld_exporter
+Group=mysqld_exporter
+Type=simple
+Restart=always
+ExecStart=/etc/mysqld_exporter/mysqld_exporter \
+--config.my-cnf /etc/mysqld_exporter/mysqld_exporter.my.cnf \
+--collect.global_status \
+--collect.info_schema.innodb_metrics \
+--collect.auto_increment.columns \
+--collect.info_schema.processlist \
+--collect.binlog_size \
+--collect.info_schema.tablestats \
+--collect.global_variables \
+--collect.info_schema.query_response_time \
+--collect.info_schema.userstats \
+--collect.info_schema.tables \
+--collect.perf_schema.tablelocks \
+--collect.perf_schema.file_events \
+--collect.perf_schema.eventswaits \
+--collect.perf_schema.indexiowaits \
+--collect.perf_schema.tableiowaits \
+--collect.slave_status \
+--web.listen-address=171.244.22.174:9104
+
+[Install]
+WantedBy=multi-user.target
