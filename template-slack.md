@@ -1,0 +1,19 @@
+### test.tmpl
+{{ define "slack.my.title" -}}
+    {{- if .CommonAnnotations.summary -}}
+        {{- .CommonAnnotations.summary -}}
+    {{- else -}}
+        {{- with index .Alerts 0 -}}
+            {{- .Annotations.summary -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}
+{{ define "slack.my.text" -}}
+    {{- if .CommonAnnotations.description -}}
+        {{- .CommonAnnotations.description -}}
+    {{- else -}}
+        {{- range $i, $alert := .Alerts }}
+            {{- "\n" -}} {{- .Annotations.description -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}
