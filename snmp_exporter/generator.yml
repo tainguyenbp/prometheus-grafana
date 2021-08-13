@@ -1,3 +1,21 @@
+# Uses Grafana variables to dynamically pull in all iDRACs listed in the Telegraf config file, and draw a new "row" section for each iDRAC that gets added.
+# Displays summary table and global status "heat" map of all iDRACs being polled.
+# Summary table pulls in each iDRAC URL so clicking System Name in the table brings you directly to that iDRAC's logon page.
+# Panels and table cells change color to indicate failures or other status messages.
+# Variable selection box allows fine-tuning of which systems are displayed on the dashboard. (Default is "All").
+# Each system's section on the dashboard is dynamically drawn based on variable selection to show the following data for each host:
+# Uptime, Global Status, Power State, PSU Status, CMOS Battery Status, RAID Battery Status, Storage Status, RAM Status, & Thermal Status
+# Service Tag, BIOS Version, and Intrusion Sensor Status
+# OS Name and OS Version Table
+# System Power (in watts) Graph
+# CPU Temp Graph
+# System Air Temp Graph
+# Fan Speed Graph
+# Physical Disk Status Table (Disk Name, Capacity, Status, Predictive Fail Alarm)
+# System Log Entries Table
+# Network Interfaces Table (NIC Name, Vendor, Status, MAC Address)
+# Adding more data is as simple as adding the appropriate iDRAC OID to the Telegraf config file, and adding a panel to display the new data on the dashboard.
+
 modules:
   snmp_exporter:
 #    walk: [ciscoFlashDeviceIndex,ciscoFlashDeviceSize,ciscoFlashDeviceMinPartitionSize,ciscoFlashDeviceMaxPartitions,ciscoFlashDevicePartitions,ciscoFlashDeviceChipCount,ciscoFlashDeviceName,ciscoFlashDeviceDescr,ciscoFlashDeviceController,ciscoFlashDeviceCard,ciscoFlashDeviceNameExtended,ciscoFlashDeviceSizeExtended,ciscoFlashDeviceMinPartitionSizeExtended,ciscoFlashPartitionSize,ciscoFlashPartitionFreeSpace,ciscoFlashPartitionFileCount,ciscoFlashPartitionStatus,ciscoFlashPartitionFreeSpaceExtended,ciscoFlashPartitionSizeExtended,ciscoFlashFileSize]
