@@ -1,0 +1,176 @@
+modules:
+  snmp_exporter:
+#    walk: [ciscoFlashDeviceIndex,ciscoFlashDeviceSize,ciscoFlashDeviceMinPartitionSize,ciscoFlashDeviceMaxPartitions,ciscoFlashDevicePartitions,ciscoFlashDeviceChipCount,ciscoFlashDeviceName,ciscoFlashDeviceDescr,ciscoFlashDeviceController,ciscoFlashDeviceCard,ciscoFlashDeviceNameExtended,ciscoFlashDeviceSizeExtended,ciscoFlashDeviceMinPartitionSizeExtended,ciscoFlashPartitionSize,ciscoFlashPartitionFreeSpace,ciscoFlashPartitionFileCount,ciscoFlashPartitionStatus,ciscoFlashPartitionFreeSpaceExtended,ciscoFlashPartitionSizeExtended,ciscoFlashFileSize]
+#    walk: [coolingDevicechassisIndex,coolingDeviceIndex,coolingDeviceStateCapabilities,coolingDeviceStateSettings,coolingDeviceStateSettings,coolingDeviceStatus,coolingDeviceReading,coolingDeviceType,coolingDeviceLocationName]
+#    walk: [lgpCtrlNumberInstalledControlModules,lgpCtrlNumberFailedControlModules,lgpCtrlNumberRedundantControlModules,lgpCtrlNumberControlModuleWarnings,lgpCtrlBoardBatteryVoltage,]
+
+    # walk: [memoryDeviceLocationName,memoryDeviceIndex,memoryDeviceStateSettings,memoryDeviceStatus,
+    # memoryDeviceSize,memoryDeviceSpeed,memoryDeviceManufacturerName,memoryDevicePartNumberName,memoryDeviceSerialNumberName,
+    # memoryDeviceCurrentOperatingSpeed,
+    # pCIDeviceIndex,pCIDeviceStateSettings,pCIDeviceStatus,pCIDeviceManufacturerName,pCIDeviceDescriptionName,pCIDeviceFQDD,
+    # racFirmwareVersion,
+    # firmwareIndex,firmwareTypeName,firmwareVersionName,
+    # numEventLogEntries,
+    # systemBIOSStatus,systemBIOSVersionName,
+    # intrusionStatus,intrusionLocationName,
+    # ]
+
+# #    walk: [fruInformationStatus,fruManufacturerName,fruSerialNumberName,fruPartNumberName,fruRevisionName,intrusionLocationName,
+#     physicalDiskName,physicalDiskBusType,physicalDiskNegotiatedSpeed,physicalDiskCapableSpeed,physicalDiskMediaType,physicalDiskProtocolVersion,physicalDiskPCIeNegotiatedLinkWidth,physicalDiskPCIeCapableLinkWidth,
+#     controllerPatrolReadMode,controllerPatrolReadState,controllerCopyBackMode,controllerLoadBalanceSetting,
+#     controllerDisplayName,controllerEnhancedAutoImportForeignConfigMode,controllerBootModeSupported,controllerBootMode,controllerCheckConsistencyMode,controllerRAID10UnevenSpansSupported,
+#     controllerName,controllerFWVersion,controllerDisplayName,controllerDriverVersion,
+#     controllerSecurityStatus,controllerEncryptionKeyPresent,controllerEncryptionCapability,controllerDisplayName,controllerT10PICapability,
+#     controllerRebuildRate,controllerReconstructRate,controllerPatrolReadRate,controllerBGIRate,controllerCheckConsistencyRate,controllerDisplayName,
+#     controllerRollUpStatus,controllerCacheSizeInMB,controllerSecurityStatus,controllerLoadBalanceSetting,controllerMaxCapSpeed,controllerDisplayName]
+
+    # walk:
+    #   - sysUpTime
+    #   - lgpPduTable
+    #   - lgpPduPsTable
+    #   - lgpPduPsLineTable
+    #   - lgpPduRcpTable
+    #   - lgpPduAuxSensorTable
+    # lookups:
+    #   - source_indexes: [lgpPduEntryIndex]
+    #     lookup: lgpPduEntrySysAssignLabel
+    #   - source_indexes: [lgpPduPsEntryIndex]
+    #     lookup: lgpPduPsEntrySysAssignLabel
+    #   - source_indexes: [lgpPduRcpEntryIndex]
+    #     lookup: lgpPduRcpEntrySysAssignLabel
+    #   - source_indexes: [lgpPduAuxSensorIndex]
+    #     lookup: lgpPduAuxSensorSysAssignLabel
+
+    # walk: [lgpEnvState,lgpEnvPoints,lgpEnvUnits,lgpEnvRemoteSensors,lgpEnvTemperatureWellKnown,lgpEnvTemperatureFahrenheit,lgpEnvTemperatureCelsius,lgpEnvTemperatureControlMode,lgpEnvHumidityWellKnown,
+    # lgpEnvHumidityRelative,lgpEnvStateSystem,lgpEnvStateCooling,lgpEnvStateHeating,lgpEnvStateHumidifying,lgpEnvStateDehumidifying,lgpEnvStateEconoCycle,lgpEnvStateFan,
+    # lgpEnvStateGeneralAlarmOutput,lgpEnvStateCoolingCapacity,lgpEnvStateHeatingCapacity,lgpEnvStateAudibleAlarm,lgpEnvStateCoolingUnits,lgpEnvStateCoolingUnit1,lgpEnvStateCoolingUnit2,
+    # lgpEnvStateCoolingUnit3,lgpEnvStateCoolingUnit4,lgpEnvStateHeatingUnits,lgpEnvStateHeatingUnit1,lgpEnvStateHeatingUnit2,lgpEnvStateHeatingUnit3,lgpEnvStateHeatingUnit4,
+    # lgpEnvStateOperatingReason,lgpEnvStateOperatingMode,lgpEnvStateFanCapacity,lgpEnvStateFreeCoolingCapacity,lgpEnvStateDehumidifyingCapacity,lgpEnvStateHumidifyingCapacity,
+    # lgpEnvStateHotWater,lgpEnvConfigChillWaterControl,lgpEnvStatisticsHotWaterRunHr,lgpEnvChilledWaterPoint,lgpEnvHotWaterPoint,lgpChillWaterTemperature,]
+
+#    walk: [lgpEnvTemperature,lgpEnvHumidity,lgpEnvState,lgpEnvConfig,lgpEnvControl,lgpEnvStatistics]
+
+#    walk: [lgpEnvConfigHumidityControl,lgpEnvConfigLocalTemperatureUnit,lgpEnvConfigSleepMode,lgpEnvConfigTempControlAlgorithm,lgpEnvStateFreeCooling,lgpEnvStateOperatingMode,lgpEnvStateOperatingReason]
+
+    # walk: [lgpPduAuxMeasSensorIndex,
+    #     lgpPduAuxMeasSensorMeasurementIndex,
+    #     lgpPduAuxMeasType,
+    #     lgpPduAuxMeasSensorSysAssignLabel,
+    #     lgpPduAuxMeasUsrLabel,
+    #     lgpPduAuxMeasUsrTag1,
+    #     lgpPduAuxMeasUsrTag2,
+    #     lgpPduAuxMeasSensorSerialNum,
+    #     lgpPduAuxMeasTempDegF,
+    #     lgpPduAuxMeasTempThrshldUndrAlmDegF,
+    #     lgpPduAuxMeasTempThrshldOvrAlmDegF,
+    #     lgpPduAuxMeasTempThrshldUndrWarnDegF,
+    #     lgpPduAuxMeasTempThrshldOvrWarnDegF,
+    #     lgpPduAuxMeasTempDegC,
+    #     lgpPduAuxMeasTempThrshldUndrAlmDegC,
+    #     lgpPduAuxMeasTempThrshldOvrAlmDegC,
+    #     lgpPduAuxMeasTempThrshldUndrWarnDegC,
+    #     lgpPduAuxMeasTempThrshldOvrWarnDegC,
+    #     lgpPduAuxMeasHum,
+    #     lgpPduAuxMeasHumThrshldUndrAlm,
+    #     lgpPduAuxMeasHumThrshldOvrAlm,
+    #     lgpPduAuxMeasHumThrshldUndrWarn,
+    #     lgpPduAuxMeasHumThrshldOvrWarn,
+    #     lgpPduAuxMeasDrClosureState,
+    #     lgpPduAuxMeasDrClosureConfig,
+    #     lgpPduAuxMeasCntctClosureState,
+    #     lgpPduAuxMeasCntctClosureConfig,
+    #     lgpPduAuxMeasDiffPressure,
+    #     lgpPduAuxMeasDiffPressureThrshldUndrAlm,
+    #     lgpPduAuxMeasDiffPressureThrshldOvrAlm,
+    #     lgpPduAuxMeasDiffPressureThrshldUndrWarn,
+    #     lgpPduAuxMeasDiffPressureThrshldOvrWarn,
+    #     lgpPduAuxMeasLeakDetectState]
+
+    # walk: [lgpPduRbLineEntryIndex,
+    #     lgpPduRbLineEntryId,
+    #     lgpPduRbLineEntryLine,
+    #     lgpPduRbLineEntryEpLNTenths,
+    #     lgpPduRbLineEntryEpLN,
+    #     lgpPduRbLineEntryEc,
+    #     lgpPduRbLineEntryPwr,
+    #     lgpPduRbLineEntryAp,
+    #     lgpPduRbLineEntryPf,
+    #     lgpPduRbLineEntryEcHundredths,
+    #     lgpPduRbLineEntryEcThrshldUndrAlm,
+    #     lgpPduRbLineEntryEcThrshldOvrWarn,
+    #     lgpPduRbLineEntryEcThrshldOvrAlm,
+    #     lgpPduRbLineEntryEcAvailBeforeAlarmHundredths,
+    #     lgpPduRbLineEntryEcAvailBeforeAlarm,
+    #     lgpPduRbLineEntryEcUsedBeforeAlarm,
+    #     lgpPduRbLineEntryEpLL,
+    #     lgpPduRbLineEntryEpLLTenths]
+
+
+#    walk: [lgpSysStatus,lgpSysSettings,lgpSysControl,lgpSysTime,lgpSysMaintenance,lgpSysEventDescription,lgpSysEventNotifications,lgpSysDeviceComponentGroup,lgpSysDeviceComponentTable,lgpSysDeviceComponentIndex,lgpSysDeviceComponentDescr,lgpSysDeviceComponentSerialNum,lgpSysDeviceComponentModelNum,lgpSysDeviceComponentWellknown,lgpSysDeviceBatCabinet,lgpSysDeviceParallelCabinet,lgpSysDeviceMaintBypass,lgpSysStatisticsRunHrs,lgpSysSelfTestResult,lgpSysState,lgpSysAudibleAlarm,lgpSysSelfTest,lgpSysControlOperationOnOff,lgpSysTimeEpoch,lgpSysMaintenanceCapacity,lgpSysMaintenanceYear,lgpSysMaintenanceMonth]
+  #  walk: [lgpEnvConfigFanSpeedControlSensor,lgpEnvConfigCabinetSensorAlarms,lgpEnvConfigAirTemperatureControlSensor,lgpEnvConfigFanSpeedCapacity,lgpEnvConfigFanSpeedMode,lgpEnvBatteryCabinetPoint,lgpBatteryTempterature,lgpLocal1Temperature,lgpLocal2Temperature,lgpLocal3Temperature]
+
+    # walk: [lgpPduEntrySWOverTemperatureProtectionConfig,
+    #        lgpPduRcpEntryIndex,
+    #         lgpPduRcpEntryId,
+    #         lgpPduRcpEntryUsrLabel,
+    #         lgpPduRcpEntryUsrTag1,
+    #         lgpPduRcpEntryUsrTag2,
+    #         lgpPduRcpEntrySysAssignLabel,
+    #         lgpPduRcpEntryPosition,
+    #         lgpPduRcpEntryType,
+    #         lgpPduRcpEntryLineSource,
+    #         lgpPduRcpEntryCapabilities,
+    #         lgpPduRcpEntryEp,
+    #         lgpPduRcpEntryEpTenths,
+    #         lgpPduRcpEntryEc,
+    #         lgpPduRcpEntryEcHundredths,
+    #         lgpPduRcpEntryPwrOut,
+    #         lgpPduRcpEntryApOut,
+    #         lgpPduRcpEntryPf,
+    #         lgpPduRcpEntryFreq,
+    #         lgpPduRcpEntryEnergyAccum,
+    #         lgpPduRcpEntryPwrOnDelay,
+    #         lgpPduRcpEntryPwrState,
+    #         lgpPduRcpEntryPwrUpState,
+    #         lgpPduRcpEntryControl,
+    #         lgpPduRcpEntryControlLock,
+    #         lgpPduRcpEntryEcThrshldUnderAlarm,
+    #         lgpPduRcpEntryEcThrshldOverWarn,
+    #         lgpPduRcpEntryEcThrshldOverAlarm,
+    #         lgpPduRcpEntryEcAvailBeforeAlarmHundredths,
+    #         lgpPduRcpEntryEcAvailBeforeAlarm,
+    #         lgpPduRcpEntryEcUsedBeforeAlarm,
+    #         lgpPduRcpEntryEcCrestFactor,
+    #         lgpPduRcpEntryBlinkLED,
+    #         lgpPduRcpEntrySwOverTemperatureProtection,
+    #         lgpPduRcpEntryOperationCondition,
+    #         lgpPduRcpEntryCriticality,
+    #         lgpPduRcpEntryPostOnDelay,
+    #         lgpPduRcpEntryPostOffDelay,
+    #         lgpPduRcpEntryAddReceptacleToGroup,
+    #         lgpPduRcpEntryRemoveReceptacleFromGroup,
+    #                 lgpPduAuxSensorIndex,
+    #     lgpPduAuxSensorMeasType,
+    #     lgpPduAuxSensorId,
+    #     lgpPduAuxSensorSysAssignLabel,
+    #     lgpPduAuxSensorPositionRelative,
+    #     lgpPduAuxSensorUsrLabel,
+    #     lgpPduAuxSensorUsrTag1,
+    #     lgpPduAuxSensorUsrTag2,
+    #     lgpPduAuxSensorTempSerialNum,
+    #     lgpPduAuxSensorHumSerialNum,
+    #     lgpPduAuxSensorTempMeasurementDegF,
+    #     lgpPduAuxSensorTempThrshldUndrAlmDegF,
+    #     lgpPduAuxSensorTempThrshldOvrAlmDegF,
+    #     lgpPduAuxSensorTempThrshldUndrWarnDegF,
+    #     lgpPduAuxSensorTempThrshldOvrWarnDegF,
+    #     lgpPduAuxSensorTempMeasurementDegC,
+    #     lgpPduAuxSensorTempThrshldUndrAlmDegC,
+    #     lgpPduAuxSensorTempThrshldOvrAlmDegC,
+    #     lgpPduAuxSensorTempThrshldUndrWarnDegC,
+    #     lgpPduAuxSensorTempThrshldOvrWarnDegC,
+    #     lgpPduAuxSensorHumMeasurement,
+    #     lgpPduAuxSensorHumThrshldUndrAlm,
+    #     lgpPduAuxSensorHumThrshldOvrAlm,
+    #     lgpPduAuxSensorHumThrshldUndrWarn,
+    #     lgpPduAuxSensorHumThrshldOvrWarn]
