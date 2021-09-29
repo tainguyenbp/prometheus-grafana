@@ -1,0 +1,278 @@
+groups:
+   -name: node-exporter- alert
+    rules:
+    -alert: node-exporter- down
+      expr: node_exporter:up == 0 
+       for : 1m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} is down "   
+        description: " instance: {{ $labels.instance }} \n- job: {{ $labels.job }} is down, it has been 1 minute a. "  
+        value: " {{value}} $ " 
+        instance: " {{}} $ labels.instance " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var- instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun.com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+
+
+    -alert: node-exporter-cpu- high
+      expr: node_exporter:cpu:total:percent > 80
+       for : 3m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} cpu usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-cpu-iowait- high
+      expr: node_exporter:cpu:iowait:percent >= 12
+       for : 3m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} cpu iowait usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance} } " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun .com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-load-load1- high
+      expr: (node_exporter:load:load1) > (node_exporter:cpu:count) * 1.2
+       for : 3m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} load1 usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-memory- high
+      expr: node_exporter:memory:used:percent > 85
+       for : 3m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} memory usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-disk- high
+      expr: node_exporter:disk:used:percent > 88
+       for : 10m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} disk usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-disk-read:count- high
+      expr: node_exporter:disk:read:count:rate > 3000
+       for : 2m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} iops read usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance} } " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun .com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-disk-write-count- high
+      expr: node_exporter:disk:write:count:rate > 3000
+       for : 2m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} iops write usage is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance} } " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun .com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+
+
+
+    -alert: node-exporter-disk-read-mb- high
+      expr: node_exporter:disk:read:mb:rate > 60 
+       for : 2m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} read more bytes than {{ $value }} "   
+        description: ""     
+        instance: " {{ $labels.instance }} " 
+        value: " {{ $value }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console. aliyun.com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-disk-write-mb- high
+      expr: node_exporter:disk:write:mb:rate > 60
+       for : 2m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} write bytes higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console. aliyun.com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-filefd-allocated-percent- high
+      expr: node_exporter:filefd_allocated:percent > 80
+       for : 10m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} Open file descriptor is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance} } " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun .com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-network-netin-error-rate- high
+      expr: node_exporter:network:netin:error:rate > 4
+       for : 1m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} The error rate of package entry is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console. aliyun.com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        of the type: " aliyun_meta_ecs_info " 
+    - Alert: the Node-Exporter-Network-netin-Packet-Rate- High
+      expr: node_exporter:network:netin:packet:rate > 35000
+       for : 1m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} package entry rate is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-network-netout-packet-rate- high
+      expr: node_exporter:network:netout:packet:rate > 35000
+       for : 1m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} The packet outflow rate is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-network-tcp-total-count- high
+      expr: node_exporter:network:tcp:total:count > 40000
+       for : 1m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} the number of tcp connections is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-process-zoom-total-count- high
+      expr: node_exporter:process:zoom:total:count > 10
+       for : 10m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} The number of dead processes is higher than {{ $value }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun. com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
+
+    -alert: node-exporter-time-offset- high
+      expr: node_exporter:time:offset > 0.03
+       for : 2m
+      labels: 
+        severity: info
+      annotations:
+        summary: " instance: {{ $labels.instance }} {{ $labels.desc }} {{ $value }} {{ $labels.unit }} "   
+        description: ""     
+        value: " {{ $value }} " 
+        instance: " {{ $labels.instance }} " 
+        grafana: " http://xxxxxxxx.com/d/node-exporter/node-exporter?orgId=1&var-instance={{ $labels.instance }} " 
+        console: " https://ecs.console.aliyun.com/#/server/{{ $labels.instanceid }}/detail?regionId=cn-beijing " 
+        cloudmonitor: "https://cloudmonitor.console.aliyun.com/#/hostDetail/chart/instanceId={{ $labels.instanceid }}&system=®ion=cn-beijing&aliyunhost=true " 
+        id: " {{ $labels.instanceid }} " 
+        type: " aliyun_meta_ecs_info "
