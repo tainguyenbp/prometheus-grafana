@@ -1,0 +1,296 @@
+groups:
+   -name: node-exporter- record
+    rules:
+    -expr: up{job=~ " node-exporter " }
+      record: node_exporter:up 
+      labels: 
+        desc: "Is the node online, online 1, offline 0 " 
+        unit: "  " 
+        job: " node-exporter " -expr 
+    : time()- node_boot_time_seconds{}
+      record: node_exporter:node_uptime
+      labels: 
+        desc: " Node running time " 
+        unit: " s " 
+        job: " node-exporter " 
+# ########################### ############################################## ############## 
+#                               cpu # 
+    -expr: (1-avg by (environment,instance) (irate(node_cpu_seconds_total{job = " node-exporter " ,mode = " idle " }[ 5m]))) * 100 
+      record: node_exporter:cpu:total:percent
+      labels: 
+        desc: "The percentage of total CPU consumption of the node " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job = " node-exporter " ,mode = " idle " }[5m]))) * 100 
+      record: node_exporter:cpu:idle:percent
+      labels: 
+        desc: " The percentage of CPU idle of the node " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job = " node-exporter " ,mode = " iowait " }[5m]))) * 100 
+      record: node_exporter:cpu:iowait:percent
+      labels: 
+        desc: " Node's CPU iowait percentage " 
+        unit: " % " 
+        job: " node-exporter "
+
+
+    -expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job = " node-exporter " ,mode = " system " }[5m]))) * 100 
+      record: node_exporter:cpu:system:percent
+      labels: 
+        desc: " The percentage of the node's cpu system " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job = " node-exporter " ,mode = " user " }[5m]))) * 100 
+      record: node_exporter:cpu:user:percent
+      labels: 
+        desc: " The percentage of CPU user of the node " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job= " node-exporter " ,mode=~ " softirq|nice|irq|steal " }[5m]))) * 100 
+      record: node_exporter:cpu:other:percent
+      labels: 
+        desc: " The percentage of other CPUs of the node " 
+        unit: " % " 
+        job: " node-exporter " 
+# ######################### ############################################## ################
+
+
+# ############################################# ########################################### 
+#                                     memory # 
+    -expr: node_memory_MemTotal_bytes{job= " node-exporter " }
+      record: node_exporter:memory:total
+      labels: 
+        desc: " Total memory of the node "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: node_memory_MemFree_bytes{job= " node-exporter " }
+      record: node_exporter:memory:free
+      labels: 
+        desc: " The amount of remaining memory of the node "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: node_memory_MemTotal_bytes{job= " node-exporter " }-node_memory_MemFree_bytes{job= " node-exporter " }
+      record: node_exporter:memory:used
+      labels: 
+        desc: " The amount of used memory of the node "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: node_memory_MemTotal_bytes{job= " node-exporter " }-node_memory_MemAvailable_bytes{job= " node-exporter " }
+      record: node_exporter:memory:actualused
+      labels: 
+        desc: " The amount of memory actually used by the node user "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: (1-(node_memory_MemAvailable_bytes{job = " node-exporter " } / (node_memory_MemTotal_bytes{job = " node-exporter " })))* 100
+      record: node_exporter:memory:used:percent
+      labels: 
+        desc: " Node's memory usage percentage " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: ((node_memory_MemAvailable_bytes{job = " node-exporter " } / (node_memory_MemTotal_bytes{job = " node-exporter " })))* 100
+      record: node_exporter:memory:free:percent
+      labels: 
+        desc: " Remaining percentage of node memory " 
+        unit: " % " 
+        job: " node-exporter " 
+# ########################### ############################################## ############### 
+#                                    load # 
+    -expr: sum by (instance) (node_load1{job = " node-exporter " })
+      record: node_exporter:load:load1
+      labels: 
+        desc: " System load in 1 minute " 
+        unit: "  " 
+        job: " node-exporter "
+
+    -expr: sum by (instance) (node_load5{job= " node-exporter " })
+      record: node_exporter:load:load5
+      labels: 
+        desc: " System load in 5 minutes " 
+        unit: "  " 
+        job: " node-exporter "
+
+    -expr: sum by (instance) (node_load15{job= " node-exporter " })
+      record: node_exporter:load:load15
+      labels: 
+        desc: " System load for 15 minutes " 
+        unit: "  " 
+        job: " node-exporter "
+   
+# ############################################# ########################################### 
+#                                  disk # 
+    -expr: node_filesystem_size_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " }
+      record: node_exporter:disk:usage:total
+      labels: 
+        desc: " The total amount of disks on the node "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: node_filesystem_avail_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " }
+      record: node_exporter:disk:usage:free
+      labels: 
+        desc: " The remaining disk space of the node "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: node_filesystem_size_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " }-node_filesystem_avail_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " }
+      record: node_exporter:disk:usage:used
+      labels: 
+        desc: " The space used by the node's disk "
+        unit: byte
+        job: " node-exporter "
+
+    -expr: (1-node_filesystem_avail_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " } / node_filesystem_size_bytes{job= " node-exporter " ,fstype=~ " ext4|xfs " }) * 100 
+      record: node_exporter:disk:used:percent    
+      labels: 
+        desc: " Percentage of node's disk usage " 
+        unit: " % " 
+        job: " node-exporter "
+
+    -expr: irate(node_disk_reads_completed_total{job= " node-exporter " }[1m])
+      record: node_exporter:disk:read:count:rate
+      labels: 
+        desc: " node's disk read rate " 
+        unit: " times/second " 
+        job: " node-exporter "
+
+    -expr: irate(node_disk_writes_completed_total{job= " node-exporter " }[1m])
+      record: node_exporter:disk:write:count:rate
+      labels: 
+        desc: " node's disk write rate " 
+        unit: " times/second " 
+        job: " node-exporter "
+
+    -expr: (irate(node_disk_written_bytes_total{job= " node-exporter " }[1m]))/1024/1024
+      record: node_exporter:disk:read:mb:rate
+      labels: 
+        desc: " Node's device read MB rate " 
+        unit: " MB/s " 
+        job: " node-exporter "
+
+    -expr: (irate(node_disk_read_bytes_total{job= " node-exporter " }[1m]))/1024/1024
+      record: node_exporter:disk:write:mb:rate
+      labels: 
+        desc: " Node's device write MB rate " 
+        unit: " MB/s " 
+        job: " node-exporter "
+
+# ############################################# ########################################### 
+#                                 filesystem # 
+    -expr: (1 -node_filesystem_files_free{job= " node-exporter " ,fstype=~ " ext4|xfs " } / node_filesystem_files{job= " node-exporter " ,fstype=~ " ext4|xfs " }) * 100 
+      record: node_exporter:filesystem:used:percent    
+      labels: 
+        desc: " The remaining available percentage of the node's inode " 
+        unit: " % " 
+        job: " node-exporter " 
+# ####################### ############################################## ################ 
+#                                 filefd # -expr 
+    : node_filefd_allocated{job = " node-exporter " }
+      record: node_exporter:filefd_allocated:count
+      labels: 
+        desc: " The number of open file descriptors of the node " 
+        unit: " % " 
+        job: " node-exporter "
+ 
+    -expr: node_filefd_allocated{job= " node-exporter " }/node_filefd_maximum{job= " node-exporter " } * 100 
+      record: node_exporter:filefd_allocated:percent
+      labels: 
+        desc: " Node's file descriptor open percentage " 
+        unit: " % " 
+        job: " node-exporter "
+
+# ############################################# ########################################## 
+#                                 network # 
+    -expr: avg by (environment,instance,device) (irate(node_network_receive_bytes_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netin:bit:rate
+      labels: 
+        desc: " The number of bits received per second by the node network card eth0 " 
+        unit: " bit/s " 
+        job: " node-exporter "
+
+    -expr: avg by (environment,instance,device) (irate(node_network_transmit_bytes_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netout:bit:rate
+      labels: 
+        desc: " The number of bits sent by the node network card eth0 per second " 
+        unit: " bit/s " 
+        job: " node-exporter "
+
+    -expr: avg by (environment,instance,device) (irate(node_network_receive_packets_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netin:packet:rate
+      labels: 
+        desc: "The number of data packets received by the node network card per second " 
+        unit: " pieces/sec " 
+        job: " node-exporter "
+
+    -expr: avg by (environment,instance,device) (irate(node_network_transmit_packets_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netout:packet:rate
+      labels: 
+        desc: " Number of data packets sent by the node network card " 
+        unit: " pieces/sec " 
+        job: " node-exporter "
+
+    -expr: avg by (environment,instance,device) (irate(node_network_receive_errs_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netin:error:rate
+      labels: 
+        desc: " The number of received error packets detected by the node device driver " 
+        unit: " pieces/sec " 
+        job: " node-exporter "
+
+    -expr: avg by (environment,instance,device) (irate(node_network_transmit_errs_total{device=~ " eth0|eth1|ens33|ens37 " }[1m]))
+      record: node_exporter:network:netout:error:rate
+      labels: 
+        desc: " The number of sent error packets detected by the node device driver " 
+        unit: " pieces/sec " 
+        job: " node-exporter "
+      
+    -expr: node_tcp_connection_states{job= " node-exporter " , state= " established " }
+      record: node_exporter:network:tcp:established:count
+      labels: 
+        desc: " The number of nodes currently established " 
+        unit: " a " 
+        job: " node-exporter "
+
+    -expr: node_tcp_connection_states{job = " node-exporter " , state = " time_wait " }
+      record: node_exporter:network:tcp:timewait:count
+      labels: 
+        desc: " Number of connections for node timewait " 
+        unit: " a " 
+        job: " node-exporter "
+
+    -expr: sum by (environment,instance) (node_tcp_connection_states{job= " node-exporter " })
+      record: node_exporter:network:tcp:total:count
+      labels: 
+        desc: " Total number of node tcp connections " 
+        unit: " units " 
+        job: " node-exporter "
+   
+# ############################################# ########################################### 
+#                                 Process # 
+    - expr: node_processes_state {state= " Z " }
+      record: node_exporter:process:zoom:total:count
+      labels: 
+        desc: " The number of nodes whose current state is zoom " 
+        unit: " a " 
+        job: " node-exporter " 
+# ######################## ############################################## ################# 
+#                                 other # 
+    -expr: abs(node_timex_offset_seconds{job = " node-exporter " })
+      record: node_exporter:time:offset
+      labels: 
+        desc: " node time deviation " 
+        unit: " s " 
+        job: " node-exporter "
+
+# ############################################# ########################################
+   
+    -expr: count by (instance) (count by (instance,cpu) (node_cpu_seconds_total{ mode = ' system ' }))
+      record: node_exporter:cpu:count
