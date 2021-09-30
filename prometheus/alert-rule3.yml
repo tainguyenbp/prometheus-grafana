@@ -1,0 +1,43 @@
+groups:
+  - name: node-general
+    rules:
+
+      # Defines Alert rule for high CPU usage when the CPU utilization is above 75%
+      - alert: Node_High_CPUUsage
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{job="node",mode="idle"}[5m])) * 100)) > {{ prometheus_alert_cpu_threshold }}
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "{% raw %} {{$labels.instance}}: {% endraw %} High CPU usage detected"
+          description: "{% raw %} {{$labels.instance}}: {% endraw %} CPU usage is above {{ prometheus_alert_cpu_threshold }}% (current value is: {% raw %} {{ $value }} {% endraw %})"
+
+      # Defines Alert rule for high CPU load average
+      - alert: Node_High_LoadAverage
+        expr: ((node_load5 / count without (cpu, mode) (node_cpu_seconds_total{mode="system"})) > {{prometheus_alert_load_threshold}})
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "{% raw %} {{$labels.instance}}: {% endraw %} High Load Average detected"
+          description: "{% raw %} {{$labels.instance}}: {% endraw %} Load Average is high"
+
+      # Defines Alert rule for high swap data usage, indicated by a defined threshold
+      - alert: Node_High_SwapUsage
+        expr: (((node_memory_SwapTotal_bytes-node_memory_SwapFree_bytes)/node_memory_SwapTotal_bytes)*100) > {{ prometheus_alert_swap_threshold }}
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "{% raw %} {{$labels.instance}}: {% endraw %} Swap usage detected"
+          description: "{% raw %} {{$labels.instance}}: {% endraw %} Swap usage usage is above {{ prometheus_alert_swap_threshold }}% (current value is: {% raw %} {{ $value }} {% endraw %})"
+
+      # Defines Alert rule for High memory usage, indicated by a defined threshold
+      - alert: Node_High_MemoryUsage
+        expr: (((node_memory_MemTotal_bytes-node_memory_MemFree_bytes-node_memory_Cached_bytes)/(node_memory_MemTotal_bytes)*100)) > {{ prometheus_alert_memory_threshold }}
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "{% raw %} {{$labels.instance}}: {% endraw %} High memory usage detected"
+          description: "{% raw %} {{$labels.instance}}: {% endraw %} Memory usage is above {{ prometheus_alert_memory_threshold }}% (current value is: {% raw %} {{ $value }} {% endraw %})"
