@@ -1,0 +1,250 @@
+groups:
+  - name: node-alert
+    rules:
+    - alert: NodeDown
+      expr: up{job="node"} == 0
+      for: 3m
+      labels:
+        severity: critical
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} down"
+        description: "Instance: {{ $labels.instance }} 已暫停 3分鐘"
+        value: "{{ $value }}"
+        
+    - alert: NodeCpuHigh
+      expr: (1 - avg by (instance) (irate(node_cpu_seconds_total{job="node",mode="idle"}[5m]))) * 100 > 80
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} cpu使用率過高"
+        description: "CPU 使用率超過 80%"
+        value: "{{ $value }}"
+
+    - alert: NodeCpuIowaitHigh
+      expr: avg by (instance) (irate(node_cpu_seconds_total{job="node",mode="iowait"}[5m])) * 100 > 50
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} cpu iowait 使用率過高"
+        description: "CPU iowait 使用率超過 50%"
+        value: "{{ $value }}"
+
+    - alert: NodeLoad5High
+      expr: node_load5 > (count by (instance) (node_cpu_seconds_total{job="node",mode='system'})) * 1.2
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} load(5m) 過高"
+        description: "Load(5m) 過高，超出cpu核 1.2倍"
+        value: "{{ $value }}"
+
+    - alert: NodeMemoryHigh
+      expr: (1 - node_memory_MemAvailable_bytes{job="node"} / node_memory_MemTotal_bytes{job="node"}) * 100 > 90
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} memory 使用率過高"
+        description: "Memory 使用率超過 90%"
+        value: "{{ $value }}"
+
+    - alert: NodeDiskRootHigh
+      expr: (1 - node_filesystem_avail_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/"} / node_filesystem_size_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/"}) * 100 > 90
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/ 分区) 使用率過高"
+        description: "Disk(/ 分區) 使用率超過 90%"
+        value: "{{ $value }}"
+
+    - alert: NodeDiskBootHigh
+      expr: (1 - node_filesystem_avail_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/boot"} / node_filesystem_size_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/boot"}) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/boot 分区) 使用率過高"
+        description: "Disk(/boot 分區) 使用率超過 80%"
+        value: "{{ $value }}"
+
+    - alert: NodeDiskReadHigh
+      expr: irate(node_disk_read_bytes_total{job="node"}[5m]) > 20 * (1024 ^ 2)
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk 讀取字数 速率過高"
+        description: "Disk 讀取字数 速率超過 20 MB/s"
+        value: "{{ $value }}"
+
+    - alert: NodeDiskWriteHigh
+      expr: irate(node_disk_written_bytes_total{job="node"}[5m]) > 20 * (1024 ^ 2)
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk 寫入字数 速率過高"
+        description: "Disk 寫入字数 速率超過 20 MB/s"
+        value: "{{ $value }}"
+        
+    - alert: NodeDiskReadRateCountHigh
+      expr: irate(node_disk_reads_completed_total{job="node"}[5m]) > 3000
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk iops 每秒讀取速率過高"
+        description: "Disk iops 每秒讀取速率超過 3000 iops"
+        value: "{{ $value }}"
+
+    - alert: NodeDiskWriteRateCountHigh
+      expr: irate(node_disk_writes_completed_total{job="node"}[5m]) > 3000
+      for: 5m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk iops 每秒寫入速率過高"
+        description: "Disk iops 每秒寫入速率超過 3000 iops"
+        value: "{{ $value }}"
+
+    - alert: NodeInodeRootUsedPercentHigh
+      expr: (1 - node_filesystem_files_free{job="node",fstype=~"ext4|xfs",mountpoint="/"} / node_filesystem_files{job="node",fstype=~"ext4|xfs",mountpoint="/"}) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/ 分區) inode 使用率過高"
+        description: "Disk (/ 分區) inode 使用率超過 80%"
+        value: "{{ $value }}"
+
+    - alert: NodeInodeBootUsedPercentHigh
+      expr: (1 - node_filesystem_files_free{job="node",fstype=~"ext4|xfs",mountpoint="/boot"} / node_filesystem_files{job="node",fstype=~"ext4|xfs",mountpoint="/boot"}) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/boot 分區) inode 使用率過高"
+        description: "Disk (/boot 分區) inode 使用率超過 80%"
+        value: "{{ $value }}"
+        
+    - alert: NodeFilefdAllocatedPercentHigh
+      expr: node_filefd_allocated{job="node"} / node_filefd_maximum{job="node"} * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} filefd 打開百分比過高"
+        description: "Filefd 打開百分比 超過 80%"
+        value: "{{ $value }}"
+
+    - alert: NodeNetworkNetinBitRateHigh
+      expr: avg by (instance) (irate(node_network_receive_bytes_total{device=~"eth0|eth1|ens33|ens37"}[1m]) * 8) > 20 * (1024 ^ 2) * 8
+      for: 3m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} network 接收比特數 速率過高"
+        description: "Network 接收比特數 速率超過 20MB/s"
+        value: "{{ $value }}"
+
+    - alert: NodeNetworkNetoutBitRateHigh
+      expr: avg by (instance) (irate(node_network_transmit_bytes_total{device=~"eth0|eth1|ens33|ens37"}[1m]) * 8) > 20 * (1024 ^ 2) * 8
+      for: 3m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} network 發送比特數 速率過高"
+        description: "Network 發送比特數 速率超過 20MB/s"
+        value: "{{ $value }}"
+        
+    - alert: NodeNetworkNetinPacketErrorRateHigh
+      expr: avg by (instance) (irate(node_network_receive_errs_total{device=~"eth0|eth1|ens33|ens37"}[1m])) > 15
+      for: 3m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} 接收錯誤包 速率過高"
+        description: "Network 接收錯誤包 速率超過 15個/秒"
+        value: "{{ $value }}"
+
+    - alert: NodeNetworkNetoutPacketErrorRateHigh
+      expr: avg by (instance) (irate(node_network_transmit_packets_total{device=~"eth0|eth1|ens33|ens37"}[1m])) > 15
+      for: 3m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} 發送錯誤包 速率過高"
+        description: "Network 發送錯誤包 速率超過 15個/秒"
+        value: "{{ $value }}"
+
+    - alert: NodeProcessBlockedHigh
+      expr: node_procs_blocked{job="node"} > 10
+      for: 10m
+      labels:
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} 當前被阻塞的任務的數量過多"
+        description: "Process 當前被阻塞的任務的數量超過 10個"
+        value: "{{ $value }}"
+
+    - alert: NodeTimeOffsetHigh
+      expr: abs(node_timex_offset_seconds{job="node"}) > 3 * 60
+      for: 2m
+      labels:
+        severity: info
+        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} 時間偏差過大"
+        description: "Time 節點的時間偏差超過 3m"
+        value: "{{ $value }}"
+    - alert: TooManyRequest
+      expr: request_count_total > 100
+      for: 10s
+      labels: 
+        severity: warning
+        instance: "{{ $labels.instance }}"
+      annotations: 
+        summary: "instance: {{ $labels.instance }} 請求數量過大  "
+        description: "請求數量超過 100次/10s內"
+        value: "{{ $value }}"
+
+
+之後設定規則的設定檔，我這邊是設定會使用 line通知IT群組，需要將url 改成程式內的url 去通知 line api (alertmanager.yml)
+
+global:
+  resolve_timeout: 1m
+
+route:
+  receiver: line-notify
+  group_interval: 10s
+  repeat_interval: 10m
+  
+receivers:
+- name: line-notify
+  webhook_configs:
+  - url: {{YOUR_WEBHOOK_URL}}
+    send_resolved: true
+    
