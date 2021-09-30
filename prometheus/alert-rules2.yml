@@ -1,0 +1,105 @@
+groups:
+  - name: node-alert    rules:
+    - alert: NodeDown      expr: up{job="node"} == 0      for: 5m      labels:
+        severity: critical        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} down"        description: "Instance: {{ $labels.instance }}  It's down  5 minute "        value: "{{ $value }}"
+        
+    - alert: NodeCpuHigh      expr: (1 - avg by (instance) (irate(node_cpu_seconds_total{job="node",mode="idle"}[5m]))) * 100 > 80      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} cpu High utilization rate "        description: "CPU  Utilization rate exceeding  80%"
+        value: "{{ $value }}"
+    - alert: NodeCpuIowaitHigh      expr: avg by (instance) (irate(node_cpu_seconds_total{job="node",mode="iowait"}[5m])) * 100 > 50      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} cpu iowait  High utilization rate "        description: "CPU iowait  Utilization rate exceeding  50%"
+        value: "{{ $value }}"
+    - alert: NodeLoad5High      expr: node_load5 > (count by (instance) (node_cpu_seconds_total{job="node",mode='system'})) * 1.2      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} load(5m)  Too high "        description: "Load(5m)  Too high , beyond cpu Check the number  1.2 times "
+        value: "{{ $value }}"
+    - alert: NodeMemoryHigh      expr: (1 - node_memory_MemAvailable_bytes{job="node"} / node_memory_MemTotal_bytes{job="node"}) * 100 > 90      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} memory  High utilization rate "        description: "Memory  Utilization rate exceeding  90%"
+        value: "{{ $value }}"
+    - alert: NodeDiskRootHigh      expr: (1 - node_filesystem_avail_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/"} / node_filesystem_size_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/"}) * 100 > 90      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/  Partition )  High utilization rate "        description: "Disk(/  Partition )  Utilization rate exceeding  90%"
+        value: "{{ $value }}"
+    - alert: NodeDiskBootHigh      expr: (1 - node_filesystem_avail_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/boot"} / node_filesystem_size_bytes{job="node",fstype=~"ext.*|xfs",mountpoint ="/boot"}) * 100 > 80      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/boot  Partition )  High utilization rate "        description: "Disk(/boot  Partition )  Utilization rate exceeding  80%"
+        value: "{{ $value }}"
+    - alert: NodeDiskReadHigh      expr: irate(node_disk_read_bytes_total{job="node"}[5m]) > 20 * (1024 ^ 2)      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk  Number of bytes read   The speed is too high "        description: "Disk  Number of bytes read   Faster than  20 MB/s"
+        value: "{{ $value }}"
+    - alert: NodeDiskWriteHigh      expr: irate(node_disk_written_bytes_total{job="node"}[5m]) > 20 * (1024 ^ 2)      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk  Number of bytes written   The speed is too high "        description: "Disk  Number of bytes written   Faster than  20 MB/s"
+        value: "{{ $value }}"
+        
+    - alert: NodeDiskReadRateCountHigh      expr: irate(node_disk_reads_completed_total{job="node"}[5m]) > 3000      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk iops  The read rate per second is too high "        description: "Disk iops  The read rate per second exceeds  3000 iops"
+        value: "{{ $value }}"
+    - alert: NodeDiskWriteRateCountHigh      expr: irate(node_disk_writes_completed_total{job="node"}[5m]) > 3000      for: 5m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk iops  The write rate per second is too high "        description: "Disk iops  The write rate per second exceeds  3000 iops"
+        value: "{{ $value }}"
+    - alert: NodeInodeRootUsedPercentHigh      expr: (1 - node_filesystem_files_free{job="node",fstype=~"ext4|xfs",mountpoint="/"} / node_filesystem_files{job="node",fstype=~"ext4|xfs",mountpoint="/"}) * 100 > 80      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/  Partition ) inode  High utilization rate "        description: "Disk (/  Partition ) inode  Utilization rate exceeding  80%"
+        value: "{{ $value }}"
+    - alert: NodeInodeBootUsedPercentHigh      expr: (1 - node_filesystem_files_free{job="node",fstype=~"ext4|xfs",mountpoint="/boot"} / node_filesystem_files{job="node",fstype=~"ext4|xfs",mountpoint="/boot"}) * 100 > 80      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} disk(/boot  Partition ) inode  High utilization rate "        description: "Disk (/boot  Partition ) inode  Utilization rate exceeding  80%"
+        value: "{{ $value }}"
+        
+    - alert: NodeFilefdAllocatedPercentHigh      expr: node_filefd_allocated{job="node"} / node_filefd_maximum{job="node"} * 100 > 80      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} filefd  Open percentage too high "        description: "Filefd  Percent open   exceed  80%"
+        value: "{{ $value }}"
+    - alert: NodeNetworkNetinBitRateHigh      expr: avg by (instance) (irate(node_network_receive_bytes_total{device=~"eth0|eth1|ens33|ens37"}[1m]) * 8) > 20 * (1024 ^ 2) * 8      for: 3m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} network  The number of received bits   The speed is too high "        description: "Network  The number of received bits   Faster than  20MB/s"
+        value: "{{ $value }}"
+    - alert: NodeNetworkNetoutBitRateHigh      expr: avg by (instance) (irate(node_network_transmit_bytes_total{device=~"eth0|eth1|ens33|ens37"}[1m]) * 8) > 20 * (1024 ^ 2) * 8      for: 3m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }} network  The number of bits sent   The speed is too high "        description: "Network  The number of bits sent   Faster than  20MB/s"
+        value: "{{ $value }}"
+        
+    - alert: NodeNetworkNetinPacketErrorRateHigh      expr: avg by (instance) (irate(node_network_receive_errs_total{device=~"eth0|eth1|ens33|ens37"}[1m])) > 15      for: 3m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }}  Receive error packet   The speed is too high "        description: "Network  Receive error packet   Faster than  15 individual / second "
+        value: "{{ $value }}"
+    - alert: NodeNetworkNetoutPacketErrorRateHigh      expr: avg by (instance) (irate(node_network_transmit_packets_total{device=~"eth0|eth1|ens33|ens37"}[1m])) > 15      for: 3m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }}  Send error packet   The speed is too high "        description: "Network  Send error packet   Faster than  15 individual / second "
+        value: "{{ $value }}"
+    - alert: NodeProcessBlockedHigh      expr: node_procs_blocked{job="node"} > 10      for: 10m      labels:
+        severity: warning        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }}  Too many tasks are currently blocked "        description: "Process  The number of tasks currently blocked exceeds  10 individual "
+        value: "{{ $value }}"
+    - alert: NodeTimeOffsetHigh      expr: abs(node_timex_offset_seconds{job="node"}) > 3 * 60      for: 2m      labels:
+        severity: info        instance: "{{ $labels.instance }}"
+      annotations:
+        summary: "instance: {{ $labels.instance }}  The time deviation is too large "        description: "Time  The time deviation of the node exceeds  3m"
+        value: "{{ $value }}"
