@@ -230,21 +230,3 @@ groups:
         summary: "instance: {{ $labels.instance }} 請求數量過大  "
         description: "請求數量超過 100次/10s內"
         value: "{{ $value }}"
-
-
-之後設定規則的設定檔，我這邊是設定會使用 line通知IT群組，需要將url 改成程式內的url 去通知 line api (alertmanager.yml)
-
-global:
-  resolve_timeout: 1m
-
-route:
-  receiver: line-notify
-  group_interval: 10s
-  repeat_interval: 10m
-  
-receivers:
-- name: line-notify
-  webhook_configs:
-  - url: {{YOUR_WEBHOOK_URL}}
-    send_resolved: true
-    
