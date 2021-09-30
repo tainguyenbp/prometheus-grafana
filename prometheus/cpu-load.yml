@@ -1,0 +1,19 @@
+# The rule below will give a result with a load of 5 minutes. But it will not distinguish between a single-core machine or a multi-core machine.
+- alert: LoadAverage5minutes
+    expr: node_load5/count(node_cpu{mode="idle"}) without (cpu,mode) >= 0.95
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Load average is high for 5 minutes (instance {{ $labels.instance }})"
+      description: "Load is high \n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      
+ - name: alerting_rules
+    rules:
+      - alert: LoadAverage15m
+        expr: node_load5 >= 0.75
+        labels:
+          severity: major
+        annotations:
+          summary: "Instance {{ $labels.instance }} - high load average"
+          description: "{{ $labels.instance  }} (measured by {{ $labels.job }}) has high load average ({{ $value }}) over 5 minutes."
