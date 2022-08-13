@@ -183,3 +183,33 @@ services:
       - monitoring-net
     labels:
       org.label-schema.group: "monitoring.hotromaytinhit.tech"
+
+  sqs_exporter:
+    image: jmal98/sqs-exporter:0.1.0
+    container_name: sqs_exporter
+    environment:
+       - AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+       - AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+       - AWS_REGION=<AWS_REGION>
+    restart: unless-stopped
+    ports:
+      - "9384:9384"
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring.hotromaytinhit.tech"
+      
+  prometheus_msteams:
+    container_name: prometheus_msteams
+    image: quay.io/prometheusmsteams/prometheus-msteams:v1.5.0
+    restart: unless-stopped
+    ports:
+       - "2000:2000"
+    volumes:
+       - ./prometheus-msteams/multi-channel.yml:/tmp/multi-channel.yml
+    environment:
+       - CONFIG_FILE=/tmp/multi-channel.yml
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring.hotromaytinhit.tech"
