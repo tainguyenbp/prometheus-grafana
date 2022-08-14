@@ -213,3 +213,22 @@ services:
       - monitoring-net
     labels:
       org.label-schema.group: "monitoring.hotromaytinhit.tech"
+
+  gitlab-ci-pipelines-exporter:
+    image: quay.io/mvisonneau/gitlab-ci-pipelines-exporter:v0.5.3
+    container_name: gitlab-ci-pipelines-exporter
+    restart: unless-stopped
+    ports:
+      - 9998:8080
+    environment:
+      GCPE_GITLAB_TOKEN: <Group Access Persional Token>
+      GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter.yml
+      GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
+    volumes:
+      - type: bind
+        source: ./gitlab-ci-pipelines-exporter.yml
+        target: /etc/gitlab-ci-pipelines-exporter.yml
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring.hotromaytinhit.tech"
