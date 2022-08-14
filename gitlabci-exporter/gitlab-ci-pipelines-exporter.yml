@@ -1,0 +1,23 @@
+---
+log:
+  level: debug, infor, trace
+
+gitlab:
+  url: https://gitlab.com
+  token: <Group Access Token>
+
+# Pull jobs related metrics on all projects
+project_defaults:
+  pull:
+    pipeline:
+      jobs:
+        enabled: true
+
+# Example public projects to monitor
+projects:
+  - name: tainguyenbp/prometheus-grafana
+  - name: tainguyenbp/asterisk-exporter
+  - name: tainguyenbp/kubernetes-cluster
+
+wildcards:
+  - {}
