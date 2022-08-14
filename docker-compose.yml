@@ -52,6 +52,43 @@ services:
     labels:
       org.label-schema.group: "monitoring-stable.slat.vn"
 
+  tricksterv2:
+    image: trickstercache/trickster:2
+    container_name: tricksterv2
+    depends_on:
+      - prometheus
+      - grafana
+    ports:
+      - 8480:8480
+      - 8481:8481
+      - 8483:8483
+      - 8484:8484
+    volumes:
+      - ./docker-compose-data/trickster-config:/etc/trickster
+      - ./docker-compose-data/trickster-data:/data/trickster
+    restart: always
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring-stable.slat.vn"
+
+  tricksterv1:
+    image: tricksterio/trickster:1.1.5
+    container_name: tricksterv1
+    ports:
+      - "8080:8080"
+    environment:
+      - "ENVIRONMENT=docker-compose"
+    volumes:
+      - ./trickster/trickster.conf:/etc/trickster/trickster.conf
+    depends_on:
+      - prometheus
+      - grafana
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring-stable.slat.vn"
+      
   karma:
     image: ghcr.io/prymitive/karma:v0.103
     container_name: karma
