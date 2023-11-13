@@ -44,7 +44,7 @@ services:
       org.label-schema.group: "pushgateway.hotromaytinhit.tech"
 
   purge_pushgateway_metrics:
-    image: tainnsre/delete_pushgateway_metrics:v1.1.1
+    image: tainguyenbp/delete_pushgateway_metrics:v1.1.1
     container_name: purge_pushgateway_metrics
     command:
       - '-urlMetricsPushGateWay=http://pushgateway:9091/metrics'
