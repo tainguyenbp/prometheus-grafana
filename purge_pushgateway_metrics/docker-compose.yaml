@@ -1,0 +1,64 @@
+version: "3"
+services:
+  pushgateway:
+    image: prom/pushgateway:v1.6.2
+    container_name: pushgateway
+    restart: always
+    command:
+      - '--web.listen-address=:9091'
+      - '--push.disable-consistency-check'
+      - '--persistence.interval=10s'
+      - '--persistence.file=/data/pushgateway-metrics'
+      - '--log.level=debug'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./pushgateway/data:/data
+    networks:
+      - monitoring-network      
+    labels:
+      org.label-schema.group: "pushgateway.hotromaytinhit.tech"
+
+  prometheus:
+    image: prom/prometheus:v2.47.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus_conf/:/etc/prometheus/
+      - ./prometheus_data/:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--storage.tsdb.retention.time=1d'
+      - '--storage.tsdb.no-lockfile'
+      - '--web.enable-lifecycle' 
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring-network
+    labels:
+      org.label-schema.group: "pushgateway.hotromaytinhit.tech"
+
+  purge_pushgateway_metrics:
+    image: tainnsre/delete_pushgateway_metrics:v1.1.1
+    container_name: purge_pushgateway_metrics
+    command:
+      - '-urlMetricsPushGateWay=http://pushgateway:9091/metrics'
+      - '-timeoutMetricsPushGateWay=10'
+      - '-timeIntervalCheck=15s'
+      - '-timeSecondClearMetrics=30'
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    networks:
+      - monitoring-network
+    labels:
+      org.label-schema.group: "pushgateway.hotromaytinhit.tech"
+
+networks:
+  monitoring-network:
+    driver: bridge
