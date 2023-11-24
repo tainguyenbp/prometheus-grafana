@@ -7,7 +7,7 @@ check_operating_system () {
 }
 
 install_node_exporter_ubuntu () {
-yum install -y wget
+apt install -y wget
 
 export version_node_exporter='1.7.0'
 export arch_node_exporter='linux-amd64'
@@ -60,24 +60,25 @@ rm -rf /etc/node_exporter.tar.gz
 }
 
 operating_system=`check_operating_system`
+echo "operating_system $operating_system"
 
 if [ -f /etc/os-release ] 
 then
      operating_system_version=`awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release`
 fi
 
-if [[ $os_name == *"Ubuntu"* ]]; then
+if [[ $operating_system == *"Ubuntu"* ]]; then
     echo "======================================"
-    echo $os_name $os_version
-    if [[ "$os_version" = "bionic" ]]; then
+    echo $operating_system $operating_system_version
+    if [[ "$operating_system_version" = "bionic" ]]; then
         url=$u18_url
-        update_debian
-    elif [[ $os_version = "xenial" ]]; then
+        install_node_exporter_ubuntu
+    elif [[ $operating_system_version = "xenial" ]]; then
         url=$u16_url
-        update_debian
-    elif [[ $os_version = "focal" ]]; then
+        install_node_exporter_ubuntu
+    elif [[ $operating_system_version = "focal" ]]; then
         url=$u20_url
-        update_debian
+        install_node_exporter_ubuntu
     else
         echo "$os_verion khong duoc support"
     fi
