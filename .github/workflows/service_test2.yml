@@ -35,15 +35,11 @@ jobs:
           INPUT_JSON=$(echo '${{ toJson(github.event.inputs) }}')
           echo "INPUT_JSON: $INPUT_JSON"
           
-          # Extract descriptions and values of inputs
-          # INPUT_DESC=$(echo '${INPUT_JSON}' | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
           INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
-          
-          # Define list of workflows to trigger
-          # Iterate over the descriptions and values
           for ITEM in $INPUT_DESC; do
+            echo "ITEM is : ${ITEM}"
             # Extract description and value
-             WORKFLOW_NAME=$(${{ github.event.inputs."${ITEM}" }})
+             WORKFLOW_NAME=$(${{ github.event.inputs.'${ITEM}' }})
              echo "WORKFLOW_NAME parse input: WORKFLOW_NAME"
             # Check if the description corresponds to a workflow in the list and its value is true
             if [[ "$WORKFLOW_NAME" == "true" ]]; then
