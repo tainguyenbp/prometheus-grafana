@@ -1,0 +1,41 @@
+on:
+  workflow_dispatch:
+    inputs:
+      service_a:
+        description: 'service_a'
+        required: true
+        default: 'foo'
+        type: string
+      service_b:
+        description: 'service_b'
+        required: true
+        default: 'foo'
+        type: string
+      service_c:
+        description: 'service_c'
+        required: true
+        default: 'foo'
+        type: string
+      service_d:
+        description: 'service_d'
+        required: false
+        default: 'false'
+        type: string
+      service_e:
+        description: "Controls the debug mode, boolean, true is for on. When turned on, it'll output certain information on certain steps. Mainly used for development, but use it as you please to inspect your env and variables."
+        type: boolean
+        required: false
+        default: false
+jobs:
+  my_job:
+    name: "My job [my_value: ${{ github.event.inputs.my_value }}]"
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v4.1.6
+      
+      - run: |
+          if  ${{ github.event.inputs.service_b == 'true' }}
+            echo "Var1: ${{ github.event.inputs.var1 }}"
+            echo "Var2: ${{ github.event.inputs.var2 }}" 
+    
