@@ -43,8 +43,6 @@ on:
         default: false
       service_test10:
         description: 'service_test10'
-        required: true
-        default: 'false'
         type: multi-choice
         options:
         - service_test1
