@@ -42,7 +42,7 @@ jobs:
             BRANCH='master'
             ORG='tanguyenbp'
             REPO='prometheus-grafana'
-            WORKFLOW_NAME='service_test1'
+            LIST_NAME_WORKFLOW='service_test1 service_test2 service_test3'
             for WORKFLOW_NAME in $LIST_NAME_WORKFLOW; do
               if ${{ github.event.inputs.${WORKFLOW_NAME} == 'true' }}; then
                 echo "Triggering workflow run for $WORKFLOW_NAME..."
@@ -52,8 +52,8 @@ jobs:
                   -H "Authorization: token $TOKEN" \
                   https://api.github.com/repos/${ORG}/${REPO}/actions/workflows/${WORKFLOW_NAME}.yml/dispatches \
                   --data "{\"ref\": \"$BRANCH\"}"
-               else
-                 echo "Triggering workflow run for $WORKFLOW_NAME.. is ${{ github.event.inputs."${WORKFLOW_NAME}"}"
+              else
+                echo "Triggering workflow run for $WORKFLOW_NAME.. is ${{ github.event.inputs."${WORKFLOW_NAME}"}"
               fi
             done
 
