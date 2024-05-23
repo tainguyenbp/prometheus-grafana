@@ -32,7 +32,7 @@ jobs:
           BRANCH='master'
           ORG='tanguyenbp'
           REPO='prometheus-grafana'
-          INPUT_JSON=$(echo "${{ toJson(github.event.inputs) }}")
+          INPUT_JSON=$(echo '${{ toJson(github.event.inputs) }}')
           echo "INPUT_JSON: $INPUT_JSON"
           
           # Extract descriptions and values of inputs
