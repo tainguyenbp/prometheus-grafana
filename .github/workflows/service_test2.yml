@@ -1,16 +1,6 @@
 on:
   workflow_dispatch:
     inputs:
-      service_a:
-        description: 'service_a'
-        required: true
-        default: 'foo'
-        type: string
-      service_b:
-        description: 'service_b'
-        type: boolean
-        required: false
-        default: false
       service_test1:
         description: 'service_test1'
         type: boolean
