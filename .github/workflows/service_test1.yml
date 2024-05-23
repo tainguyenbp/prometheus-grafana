@@ -1,0 +1,59 @@
+on:
+  workflow_dispatch:
+    inputs:
+      service_a:
+        description: 'service_a'
+        required: true
+        default: 'foo'
+        type: string
+      service_b:
+        description: 'service_b'
+        type: boolean
+        required: false
+        default: false
+      service_test1:
+        description: 'service_test1'
+        type: boolean
+        required: false
+        default: false
+      service_test2:
+        description: 'service_test2'
+        type: boolean
+        required: false
+        default: false
+      service_test3:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+jobs:
+  build-deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ (startsWith(github.ref, 'refs/heads/master') && contains('["tainguyenbp"]', github.actor)) }}
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+                #if  ${{ github.event.inputs.service_b == 'true' }}
+      - name: Pre-check step, build & deploy service to the production environments
+        if: ${{ github.event.ref == 'refs/heads/master' }}
+        run: |
+            BRANCH='master'
+            ORG='tanguyenbp'
+            REPO='prometheus-grafana'
+            WORKFLOW_NAME='service_test1'
+            for WORKFLOW_NAME in $LIST_NAME_WORKFLOW; do
+              if ${{ github.event.inputs."${WORKFLOW_NAME}" == 'true' }}; then
+                echo "Triggering workflow run for $WORKFLOW_NAME..."
+                # Trigger the workflow run
+                curl -X POST \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  -H "Authorization: token $TOKEN" \
+                  https://api.github.com/repos/${ORG}/${REPO}/actions/workflows/${WORKFLOW_NAME}.yml/dispatches \
+                  --data "{\"ref\": \"$BRANCH\"}"
+               else
+                 echo "Triggering workflow run for $WORKFLOW_NAME.. is ${{ github.event.inputs."${WORKFLOW_NAME}"}"
+              fi
+            done
+
