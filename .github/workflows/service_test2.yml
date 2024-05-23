@@ -44,9 +44,9 @@ jobs:
             value=$(echo "${{ toJson(github.event.inputs) }}" | jq -r '.`${ITEM}`')
             echo "The value of $ITEM is: $value"
             
-            GET_WORKFLOW_NAME="github.event.inputs.${ITEM}"
-            value=$(echo "${{ toJson(github.event) }}" | jq -r ".$GET_WORKFLOW_NAME")
-            echo "The value of service_test1 is: $value"
+            # GET_WORKFLOW_NAME="github.event.inputs.${ITEM}"
+            # value=$(echo "${{ toJson(github.event) }}" | jq -r ".$GET_WORKFLOW_NAME")
+            # echo "The value of service_test1 is: $value"
             # Check if the description corresponds to a workflow in the list and its value is true
             if [[ "$WORKFLOW_NAME" == "true" ]]; then
               echo "Triggering workflow run for $WORKFLOW_NAME..."
