@@ -41,7 +41,7 @@ jobs:
             echo "ITEM is : ${ITEM}"
             # Extract description and value
             
-            WORKFLOW_NAME=$(echo "$INPUT_JSON" | | jq -r --arg ITEM "$ITEM" '.[$ITEM]')
+            WORKFLOW_NAME=$(echo "$INPUT_JSON" | jq -r --arg ITEM "$ITEM" '.[$ITEM]')
           
             echo "The value of $ITEM is: $WORKFLOW_NAME"
             
