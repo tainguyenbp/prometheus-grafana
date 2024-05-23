@@ -40,7 +40,9 @@ jobs:
             ITEMS='service_test1'
             echo "ITEM is : ${ITEM}"
             # Extract description and value
-             WORKFLOW_NAME=${{ github.event.inputs[$ITEM] }}
+             GET_WORKFLOW_NAME='github.event.inputs.${ITEM}'
+             echo "GET_WORKFLOW_NAME: $GET_WORKFLOW_NAME"
+             WORKFLOW_NAME=${{ eval "GET_WORKFLOW_NAME" }}
              
              echo "WORKFLOW_NAME parse input: WORKFLOW_NAME"
             # Check if the description corresponds to a workflow in the list and its value is true
