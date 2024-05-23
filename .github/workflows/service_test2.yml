@@ -16,7 +16,46 @@ on:
         type: boolean
         required: false
         default: false
-
+      service_test4:
+        description: 'service_test1'
+        type: boolean
+        required: false
+        default: false
+      service_test5:
+        description: 'service_test2'
+        type: boolean
+        required: false
+        default: false
+      service_test6:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+      service_test7:
+        description: 'service_test2'
+        type: boolean
+        required: false
+        default: false
+      service_test8:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+      service_test9:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+      service_test10:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+      service_test11:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
 jobs:
   build-deploy-production:
     runs-on: ubuntu-latest
@@ -30,8 +69,10 @@ jobs:
         if: ${{ github.event.ref == 'refs/heads/master' }}
         run: |
           BRANCH='master'
+          GITHUB_REF=${{ github.event.ref }}
           ORG='tanguyenbp'
           REPO='prometheus-grafana'
+          ORG_REPO=${GITHUB_REPOSITORY}
           INPUT_JSON=$(echo '${{ toJson(github.event.inputs) }}')
           echo "INPUT_JSON: $INPUT_JSON"
           
@@ -51,7 +92,85 @@ jobs:
               curl -X POST \
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token $TOKEN" \
-                https://api.github.com/repos/${ORG}/${REPO}/actions/workflows/${DESC}.yml/dispatches \
-                --data "{\"ref\": \"$BRANCH\"}"
+                https://api.github.com/repos/${ORG_REPO}/actions/workflows/${ITEM}.yml/dispatches \
+                --data "{\"ref\": \"${GITHUB_REF}\"}"
+            fi
+          done
+  build-deploy-development:
+    runs-on: ubuntu-latest
+    environment: development
+    if: ${{ startsWith(github.ref, 'refs/heads/develop') && contains('["tainguyenbp"]', github.actor) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+
+      - name: Pre-check step, build & deploy service to the production environments
+        if: ${{ github.event.ref == 'refs/heads/develop' }}
+        run: |
+          BRANCH='master'
+          GITHUB_REF=${{ github.event.ref }}
+          ORG='tanguyenbp'
+          REPO='prometheus-grafana'
+          ORG_REPO=${GITHUB_REPOSITORY}
+          INPUT_JSON=$(echo '${{ toJson(github.event.inputs) }}')
+          echo "INPUT_JSON: $INPUT_JSON"
+          
+          INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
+          for ITEM in $INPUT_DESC; do
+          
+            echo "ITEM is : ${ITEM}"
+            # Extract description and value
+            
+            WORKFLOW_NAME=$(echo "$INPUT_JSON" | jq -r --arg ITEM "$ITEM" '.[$ITEM]')
+          
+            echo "The value of $ITEM is: $WORKFLOW_NAME"
+            
+            if [[ "$WORKFLOW_NAME" == "true" ]]; then
+              echo "Triggering workflow run for $WORKFLOW_NAME..."
+              # Trigger the workflow run
+              curl -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token $TOKEN" \
+                https://api.github.com/repos/${ORG_REPO}/actions/workflows/${ITEM}.yml/dispatches \
+                --data "{\"ref\": \"${GITHUB_REF}\"}"
+            fi
+          done
+  build-deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    if: ${{ startsWith(github.ref, 'refs/heads/staging') && contains('["tainguyenbp"]', github.actor) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+
+      - name: Pre-check step, build & deploy service to the production environments
+        if: ${{ github.event.ref == 'refs/heads/staging' }}
+        run: |
+          BRANCH='master'
+          GITHUB_REF=${{ github.event.ref }}
+          ORG='tanguyenbp'
+          REPO='prometheus-grafana'
+          ORG_REPO=${GITHUB_REPOSITORY}
+          INPUT_JSON=$(echo '${{ toJson(github.event.inputs) }}')
+          echo "INPUT_JSON: $INPUT_JSON"
+          
+          INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
+          for ITEM in $INPUT_DESC; do
+          
+            echo "ITEM is : ${ITEM}"
+            # Extract description and value
+            
+            WORKFLOW_NAME=$(echo "$INPUT_JSON" | jq -r --arg ITEM "$ITEM" '.[$ITEM]')
+          
+            echo "The value of $ITEM is: $WORKFLOW_NAME"
+            
+            if [[ "$WORKFLOW_NAME" == "true" ]]; then
+              echo "Triggering workflow run for $WORKFLOW_NAME..."
+              # Trigger the workflow run
+              curl -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token $TOKEN" \
+                https://api.github.com/repos/${ORG_REPO}/actions/workflows/${ITEM}.yml/dispatches \
+                --data "{\"ref\": \"${GITHUB_REF}\"}"
             fi
           done
