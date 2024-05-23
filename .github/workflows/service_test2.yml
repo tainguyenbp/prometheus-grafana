@@ -36,7 +36,7 @@ jobs:
           echo "INPUT_JSON: $INPUT_JSON"
           
           # Extract descriptions and values of inputs
-          INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
+          INPUT_DESC=$(echo '${INPUT_JSON}' | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
 
           # Define list of workflows to trigger
           LIST_NAME_WORKFLOW='service_test1 service_test2 service_test3'
