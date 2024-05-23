@@ -34,7 +34,7 @@ jobs:
           REPO='prometheus-grafana'
           INPUT_JSON=$(echo "${{ toJson(github.event.inputs) }}")
           echo "INPUT_JSON: $INPUT_JSON"
-          jq --version
+          
           # Extract descriptions and values of inputs
           INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
 
