@@ -46,13 +46,8 @@ on:
         type: boolean
         required: false
         default: false
-      service_test10:
-        description: "service_test3"
-        type: boolean
-        required: false
-        default: false
       service_test:
-        description: 'service_test
+        description: 'service_test'
         required: true
         default: 'false'
         type: choice
