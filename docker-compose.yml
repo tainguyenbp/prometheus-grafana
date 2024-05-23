@@ -123,6 +123,26 @@ services:
     labels:
       org.label-schema.group: "monitoring.hotromaytinhit.tech"
 
+  yace_exporter:
+    image: ghcr.io/nerdswords/yet-another-cloudwatch-exporter:v0.60.0
+    restart: always
+    container_name: yace_exporter
+    environment:
+      AWS_REGION: ap-southeast-1
+      AWS_PROFILE: tainguyenbp
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./yace_exporter/yace-config.yaml:/tmp/config.yml
+      - ./yace_exporter/.aws:/exporter/.aws:ro ## policy
+    command:
+      - -listen-address=:8080
+      - -config.file=/tmp/config.yml
+    networks:
+      - monitoring-net
+    labels:
+      org.label-schema.group: "monitoring.hotromaytinhit.tech"
+
   node_exporter:
     image: prom/node-exporter:v1.3.1
     container_name: node_exporter
