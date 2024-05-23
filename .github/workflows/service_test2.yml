@@ -1,0 +1,70 @@
+on:
+  workflow_dispatch:
+    inputs:
+      service_a:
+        description: 'service_a'
+        required: true
+        default: 'foo'
+        type: string
+      service_b:
+        description: 'service_b'
+        type: boolean
+        required: false
+        default: false
+      service_test1:
+        description: 'service_test1'
+        type: boolean
+        required: false
+        default: false
+      service_test2:
+        description: 'service_test2'
+        type: boolean
+        required: false
+        default: false
+      service_test3:
+        description: "service_test3"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  build-deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ startsWith(github.ref, 'refs/heads/master') && contains('["tainguyenbp"]', github.actor) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+
+      - name: Pre-check step, build & deploy service to the production environments
+        if: ${{ github.event.ref == 'refs/heads/master' }}
+        run: |
+          BRANCH='master'
+          ORG='tanguyenbp'
+          REPO='prometheus-grafana'
+          INPUT_JSON=$(echo "${{ toJson(github.event.inputs) }}")
+          echo "INPUT_JSON: $INPUT_JSON"
+          
+          # Extract descriptions and values of inputs
+          INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
+
+          # Define list of workflows to trigger
+          LIST_NAME_WORKFLOW='service_test1 service_test2 service_test3'
+
+          # Iterate over the descriptions and values
+          for ITEM in $INPUT_DESC; do
+            # Extract description and value
+            DESC=$(echo "$ITEM" | cut -d ':' -f 1)
+            VALUE=$(echo "$ITEM" | cut -d ':' -f 2)
+            
+            # Check if the description corresponds to a workflow in the list and its value is true
+            if [[ "$LIST_NAME_WORKFLOW" =~ "$DESC" && "$VALUE" == "true" ]]; then
+              echo "Triggering workflow run for $DESC..."
+              # Trigger the workflow run
+              curl -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token $TOKEN" \
+                https://api.github.com/repos/${ORG}/${REPO}/actions/workflows/${DESC}.yml/dispatches \
+                --data "{\"ref\": \"$BRANCH\"}"
+            fi
+          done
