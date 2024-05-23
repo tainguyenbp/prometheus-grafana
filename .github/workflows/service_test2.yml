@@ -40,6 +40,10 @@ jobs:
           
             echo "ITEM is : ${ITEM}"
             # Extract description and value
+            
+            value=$(echo "${{ toJson(github.event.inputs) }}" | jq -r "."${ITEM}" // empty")
+            echo "The value of $ITEM is: $value"
+            
             GET_WORKFLOW_NAME="github.event.inputs.${ITEM}"
             value=$(echo "${{ toJson(github.event) }}" | jq -r ".$GET_WORKFLOW_NAME")
             echo "The value of service_test1 is: $value"
