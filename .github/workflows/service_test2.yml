@@ -51,6 +51,16 @@ on:
         type: boolean
         required: false
         default: false
+      service_test:
+        description: 'service_test
+        required: true
+        default: 'false'
+        type: choice
+        options:
+        - service_test1
+        - service_test2
+        - service_test2
+
 jobs:
   build-deploy-production:
     runs-on: ubuntu-latest
