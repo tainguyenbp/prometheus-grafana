@@ -37,9 +37,10 @@ jobs:
           
           INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
           for ITEM in $INPUT_DESC; do
+            ITEMS='service_test1'
             echo "ITEM is : ${ITEM}"
             # Extract description and value
-             WORKFLOW_NAME=${{ github.event.inputs.[$ITEM] }}
+             WORKFLOW_NAME=${{ github.event.inputs.[$ITEMS] }}
              
              echo "WORKFLOW_NAME parse input: WORKFLOW_NAME"
             # Check if the description corresponds to a workflow in the list and its value is true
