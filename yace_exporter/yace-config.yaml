@@ -1,0 +1,113 @@
+apiVersion: v1alpha1
+sts-region: ap-southeast-1
+discovery:
+  jobs:
+    - type: AWS/DocDB
+      regions:
+        - ap-southeast-1
+      searchTags:
+        - key: Environments
+          value: prod
+      period: 300
+      length: 300
+      metrics:
+        - name: CPUUtilization
+          statistics: [Average]
+        - name: DatabaseConnections
+          statistics: [Average]
+        - name: FreeableMemory
+          statistics: [Average]
+        - name: FreeStorageSpace
+          statistics: [Average]
+        - name: ReadLatency
+          statistics: [Average]
+        - name: WriteLatency
+          statistics: [Average]
+        - name: ReadIOPS
+          statistics: [Average]
+        - name: VolumeReadIOPs
+          statistics: [Average]
+        - name: VolumeWriteIOPs
+          statistics: [Average]
+        - name: WriteIOPS
+          statistics: [Average]
+        - name: ReadThroughput
+          statistics: [Average]
+        - name: WriteThroughput
+          statistics: [Average]
+        - name: FreeLocalStorage
+          statistics: [Average]
+        - name: VolumeBytesUsed
+          statistics: [Average]
+        - name: DiskQueueDepth
+          statistics: [Average]
+        - name: CPUCreditBalance
+          statistics: [Average]
+        - name: CPUCreditUsage
+          statistics: [Average]
+        - name: DBInstanceReplicaLag
+          statistics: [Average]
+        - name: VolumeReadIOPs
+          statistics: [Average]
+        - name: VolumeWriteIOPs
+          statistics: [Average]
+        - name: VolumeReadBytes
+          statistics: [Average]
+        - name: VolumeWriteBytes
+          statistics: [Average]
+
+    - type: AWS/RDS
+      regions:
+        - ap-southeast-1
+      searchTags:
+        - key: Environments
+          value: prod
+      period: 300
+      length: 300
+      metrics:
+        - name: CPUUtilization
+          statistics: [Average]
+        - name: DatabaseConnections
+          statistics: [Average]
+        - name: FreeableMemory
+          statistics: [Average]
+        - name: FreeStorageSpace
+          statistics: [Average]
+        - name: ReadThroughput
+          statistics: [Average]
+        - name: WriteThroughput
+          statistics: [Average]
+        - name: ReadLatency
+          statistics: [Average]
+        - name: WriteLatency
+          statistics: [Average]
+        - name: ReadIOPS
+          statistics: [Average]
+        - name: WriteIOPS
+          statistics: [Average]
+        - name: CPUCreditBalance
+          statistics: [Average]
+        - name: CPUCreditUsage
+          statistics: [Average]
+        - name: BurstBalance
+          statistics: [Average]
+        - name: DiskQueueDepth
+          statistics: [Average]
+        - name: EBSByteBalance%
+          statistics: [Average]
+        - name: EBSIOBalance%
+          statistics: [Average]
+        - name: NetworkReceiveThroughput
+          statistics: [Average]
+        - name: NetworkTransmitThroughput
+          statistics: [Average]
+        - name: OldestReplicationSlotLag
+          statistics: [Average]
+        - name: ReplicaLag
+          statistics: [Average]
+        - name: ReplicationSlotDiskUsage
+          statistics: [Average]
+        - name: TransactionLogsDiskUsage
+          statistics: [Average]
+        - name: TransactionLogsGeneration
+          statistics: [Average]

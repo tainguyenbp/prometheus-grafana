@@ -1,0 +1,7 @@
+{{ define "text_alert_list" }}{{ range . }}
+{{ if .Labels.alertname }}<b>alertname:</b> {{ .Labels.alertname }}{{ end }}
+{{ if .Labels.severity }}<b>severity:</b> {{ .Labels.severity }}{{ end }}
+{{ if .Annotations.description }}<b>description:</b> {{ .Annotations.description }}{{ end }}
+{{ end }}{{ end }}
+{{ define "telegram.default.message" }}{{ if gt (len .Alerts.Firing) 0 }}<b>🔥 DevOps Alerts Firing:</b> {{ template "text_alert_list" .Alerts.Firing }}{{ if gt (len .Alerts.Resolved) 0 }}
+{{ end }}{{ end }}{{ if gt (len .Alerts.Resolved) 0 }}<b>✅ DevOps Alerts Resolved: </b>{{ template "text_alert_list" .Alerts.Resolved }}{{ end }}{{ end }}
