@@ -39,6 +39,28 @@ jobs:
       - name: Pre-check step, build & deploy service to the production environments
         if: ${{ github.event.ref == 'refs/heads/master' }}
         run: |
+          BRANCH='master'
+          ORG='tanguyenbp'
+          REPO='prometheus-grafana'
+          LIST_NAME_WORKFLOW='service_test1 service_test2 service_test3'
+          INPUT_JSON=$(echo "${{ toJson(github.event.inputs) }}")
+          echo "INPUT_JSON:  ${{ github.event.inputs }}"
+          for WORKFLOW_NAME in $LIST_NAME_WORKFLOW; do
+            INPUT_VALUE=$(echo "$INPUT_JSON" | jq -r ".$WORKFLOW_NAME")
+            if [[ "$INPUT_VALUE" == "true" ]]; then
+              echo "Triggering workflow run for $WORKFLOW_NAME..."
+              # Trigger the workflow run
+              curl -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token $TOKEN" \
+                https://api.github.com/repos/${ORG}/${REPO}/actions/workflows/${WORKFLOW_NAME}.yml/dispatches \
+                --data "{\"ref\": \"$BRANCH\"}"
+            fi
+
+
+      - name: Pre-check step
+        if: ${{ github.event.ref == 'refs/heads/master' }}      
+        run: |
             BRANCH='master'
             ORG='tanguyenbp'
             REPO='prometheus-grafana'
