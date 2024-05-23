@@ -44,7 +44,7 @@ jobs:
             REPO='prometheus-grafana'
             WORKFLOW_NAME='service_test1'
             for WORKFLOW_NAME in $LIST_NAME_WORKFLOW; do
-              if ${{ github.event.inputs."${WORKFLOW_NAME}" == 'true' }}; then
+              if ${{ github.event.inputs.${WORKFLOW_NAME} == 'true' }}; then
                 echo "Triggering workflow run for $WORKFLOW_NAME..."
                 # Trigger the workflow run
                 curl -X POST \
