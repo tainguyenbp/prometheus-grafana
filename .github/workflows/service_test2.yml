@@ -36,20 +36,20 @@ jobs:
           echo "INPUT_JSON: $INPUT_JSON"
           
           # Extract descriptions and values of inputs
-          INPUT_DESC=$(echo '${INPUT_JSON}' | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
-
+          # INPUT_DESC=$(echo '${INPUT_JSON}' | jq -r 'to_entries | .[] | "\(.key): \(.value)"')
+          INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
+          
           # Define list of workflows to trigger
           LIST_NAME_WORKFLOW='service_test1 service_test2 service_test3'
 
           # Iterate over the descriptions and values
           for ITEM in $INPUT_DESC; do
             # Extract description and value
-            DESC=$(echo "$ITEM" | cut -d ':' -f 1)
-            VALUE=$(echo "$ITEM" | cut -d ':' -f 2)
-            
+             WORKFLOW_NAME="${{ github.event.inputs.${ITEM} }}"
+             echo "WORKFLOW_NAME parse input: WORKFLOW_NAME"
             # Check if the description corresponds to a workflow in the list and its value is true
-            if [[ "$LIST_NAME_WORKFLOW" =~ "$DESC" && "$VALUE" == "true" ]]; then
-              echo "Triggering workflow run for $DESC..."
+            if [[ "$WORKFLOW_NAME" == "true" ]]; then
+              echo "Triggering workflow run for $WORKFLOW_NAME..."
               # Trigger the workflow run
               curl -X POST \
                 -H "Accept: application/vnd.github.v3+json" \
