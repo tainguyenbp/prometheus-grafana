@@ -37,9 +37,12 @@ jobs:
           
           INPUT_DESC=$(echo "$INPUT_JSON" | jq -r 'keys_unsorted[]')
           for ITEM in $INPUT_DESC; do
+          
             echo "ITEM is : ${ITEM}"
             # Extract description and value
             GET_WORKFLOW_NAME="github.event.inputs.${ITEM}"
+            value=$(echo "${{ fromJSON(toJson($GET_WORKFLOW_NAME)) }}")
+            echo "The value of service_test1 is: $value"
             # Check if the description corresponds to a workflow in the list and its value is true
             if [[ "$WORKFLOW_NAME" == "true" ]]; then
               echo "Triggering workflow run for $WORKFLOW_NAME..."
