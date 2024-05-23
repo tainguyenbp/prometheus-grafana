@@ -46,6 +46,15 @@ on:
         type: boolean
         required: false
         default: false
+      service_test10:
+        description: 'service_test10'
+        required: true
+        default: 'false'
+        type: multi-choice
+        options:
+        - service_test1
+        - service_test2
+        - service_test2
       service_test:
         description: 'service_test'
         required: true
