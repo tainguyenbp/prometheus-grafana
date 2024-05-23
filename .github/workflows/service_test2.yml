@@ -51,11 +51,6 @@ on:
         type: boolean
         required: false
         default: false
-      service_test11:
-        description: "service_test3"
-        type: boolean
-        required: false
-        default: false
 jobs:
   build-deploy-production:
     runs-on: ubuntu-latest
