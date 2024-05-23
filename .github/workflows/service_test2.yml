@@ -40,7 +40,7 @@ jobs:
             echo "ITEM is : ${ITEM}"
             # Extract description and value
              GET_WORKFLOW_NAME="github.event.inputs.${ITEM}"
-             echo "GET_WORKFLOW_NAME: $GET_WORKFLOW_NAME"
+             echo "GET_WORKFLOW_NAME: ${{ $GET_WORKFLOW_NAME }}"
             # Check if the description corresponds to a workflow in the list and its value is true
             if [[ "$WORKFLOW_NAME" == "true" ]]; then
               echo "Triggering workflow run for $WORKFLOW_NAME..."
