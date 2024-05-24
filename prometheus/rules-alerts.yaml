@@ -1,0 +1,584 @@
+groups:  
+- name: cpu-90percent
+  rules:
+  - alert: Host-CPU-more-than-90-percent
+    expr: 100 - (avg by(instance,environments,service,job) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High CPU Usage is more than 90% value = {{ $value }} on server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "High CPU Usage is more than 90% value = {{ $value }} on server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: cpu-80percent
+  rules:
+  - alert: Host-CPU-more-than-80-percent
+    expr: 80 < 100 - (avg by(instance,environments,service,job) (rate(node_cpu_seconds_total{mode="idle"} == 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Failed to job scrape {{ $labels.job }} on the {{ $labels.instance }} for more than 3 minutes. Node linux seems down."
+      description: "Failed to job scrape {{ $labels.job }} on the {{ $labels.instance }} for more than 3 minutes. Node linux seems down."
+
+- name: node-windows-down
+  rules:
+  - alert: node_windows_down
+    expr: up{job=~"windows-exporter.*"} == 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Failed to job scrape {{ $labels.job }} on {{ $labels.instance }} for more than 3 minutes. Node windows seems down."
+      description: "Failed to job scrape {{ $labels.job }} on {{ $labels.instance }} for more than 3 minutes. Node windows seems down."
+
+- name: Host-unusual-disk-read-latency
+  rules:
+  - alert: Host-Unusual-Disk-Read-Latency
+    expr: (rate(node_disk_read_time_seconds_total{}[1m]) / rate(node_disk_reads_completed_total{}[1m]) > 0.02 and rate(node_disk_reads_completed_total{}[1m]) > 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host unusual disk {{ $labels.device }} read latency is growing write operations more than 20ms on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Host unusual disk {{ $labels.device }} read latency is growing write operations more than 20ms on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: Host-unusual-disk-write-latency
+  rules:
+  - alert: Host-Unusual-Disk-Write-Latency
+    expr: (rate(node_disk_write_time_seconds_total{}[1m]) / rate(node_disk_writes_completed_total{}[1m]) > 0.02 and rate(node_disk_writes_completed_total{}[1m]) > 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host unusual disk {{ $labels.device }} write latency is growing write operations more than 20ms on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Host unusual disk {{ $labels.device }} write latency is growing write operations more than 20ms on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: Host-unusual-disk-IO
+  rules:
+  - alert: Host-Unusual-Disk-IO
+    expr: (rate(node_disk_io_time_seconds_total[5m]) > 0.9) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host unusual disk {{ $labels.device }} time spent in IO is too high value = {{ $value }} on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Host unusual disk {{ $labels.device }} time spent in IO is too high value = {{ $value }} on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: Host-out-of-inodes
+  rules:
+  - alert: Host-Out-Of-Inodes
+    expr: (node_filesystem_files_free{} / node_filesystem_files{} * 100 < 10)
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host disk {{ $labels.device }} is almost running out of available inodes less than 10% on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Host disk {{ $labels.device }} is almost running out of available inodes less than 10% on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: disk-90percent
+  rules:
+  - alert: Host-Disk-more-than-90-percent
+    expr: 100 - ((node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} * 100) /  node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"}) > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Disk {{ $labels.device }} Usage is more than 90% {{ $value }} on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Disk {{ $labels.device }} Usage is more than 90% {{ $value }} on the server {{ $labels.instance }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: HTTP-Status-Prod
+  rules:
+  - alert: service_down
+    expr: (probe_http_status_code{} - 0) != 200
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "HTTP Response Code : {{ $value }} for URL {{ $labels.instance }}."
+      description: "{{ $labels.instance }} of job {{ $labels.job }} is down"
+
+- name: Prometheus-K8S-Status
+  rules:
+  - alert: prometheus_down
+    expr: (probe_http_status_code{} - 0) != 200
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "HTTP Response Code : {{ $value }} for URL {{ $labels.instance }} on cluster {{ $labels.cluster }}"
+      description: "Job {{ $labels.job }} can not access to Prometheus {{ $labels.environments }} on cluster {{ $labels.cluster }}"
+
+# - name: HTTP-Status-Dev
+#   rules:
+#   - alert: service_down
+#     expr: (probe_http_status_code{} - 0) != 200
+#     for: 3m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: "HTTP Response Code : {{ $value }} for URL {{ $labels.instance }}."
+#       description: "{{ $labels.instance }} of job {{ $labels.job }} is down" 
+
+
+### rule alerts Kafka
+
+- name: Kafka_Consumers
+  rules:
+  - alert:  Kafka_Consumers_Group_Lag
+    expr: sum(kafka_consumergroup_lag) by (consumergroup,host_name,environments,instance,partition,service,consumergroup) > 5000
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: Kafka consumers group {{ $labels.consumergroup }} partition {{ $labels.partition }} lag more than 700 (value {{ $value }}) on {{ $labels.host_name }}
+      description: Kafka consumers group {{ $labels.consumergroup }} partition {{ $labels.partition }} lag more than 700 (value {{ $value }}) on {{ $labels.host_name }}
+
+
+- name: AWS_DocDB
+  rules:
+  - alert:  docdb_low_free_memory
+    expr: sum by (name,dimension_DBInstanceIdentifier,service,environments) (aws_docdb_freeable_memory_average{name!="global",dimension_Role="WRITER"})/1024/1024 < 128
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} has less than 128Mi {{ $value }}Mi free memory."
+      description: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} has less than 128Mi {{ $value }}Mi free memory."
+
+  # - alert: docdb_total_iops
+  #   expr: (aws_docdb_write_iops_average{dimension_Role="WRITER"} + aws_docdb_read_iops_average{dimension_Role="WRITER"}) > 4000
+
+  - alert:  docdb_database_too_many_connections
+    expr: aws_docdb_database_connections_average{dimension_Role="WRITER"} > 900
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} has {{ $value }} too many connections more than 900"
+      description: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} has {{ $value }} too many connections more than 900"
+
+  - alert: docdb_total_iops
+    expr: (aws_docdb_write_iops_average{dimension_Role="WRITER"} + aws_docdb_read_iops_average{dimension_Role="WRITER"}) > 15000
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} total read write iops more than 15000"
+      description: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} total read write iops more than 15000"
+
+  - alert: docdb_high_cpu_usage
+    expr: aws_docdb_cpuutilization_average{dimension_Role="WRITER"} > 80
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} CPU usage more than 80% {{ $value }}%"
+      description: "DocumentDB instance {{ $labels.dimension_DBClusterIdentifier }} CPU usage more than 80% {{ $value }}%"
+
+  - alert: docdb_free_storage_space
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments,dimension_Role) (aws_docdb_free_local_storage_average{dimension_Role="WRITER"})/(1024*1024*1024) < 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "DocumentDB for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }}GB has less than 3GB free storage space"
+      description: "DocumentDB for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }}  {{ $value }}GB has less than 3GB free storage space"
+
+
+  # - alert: docdb_high_ebs_io_balance
+  #   expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsiobalance_percent_average{name!="global"}) < 50
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "DocumentDB EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+  #     description: "DocumentDB EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+
+  # - alert: docdb_high_ebs_byte_balance
+  #   expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsbyte_balance_percent_average{name!="global"}) < 50
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "DocumentDB EBS Byte balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+  #     description: "DocumentDB EBS Byte balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+      
+  # - alert: docdb_high_disk_queue_depth
+  #   expr: aws_docdb_disk_queue_depth_average{dimension_Role="WRITER"} > 70
+  #   for: 1m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "DocumentDB number of concurrent write requests {{ $value }}% to the distributed storage volume more than 50%"
+  #     description: "DocumentDB number of concurrent write requests {{ $value }}% to the distributed storage volume more than 50%"
+
+
+
+- name: AWS_RDS
+  rules:
+  # - alert: rds_high_ebs_io_balance
+  #   expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsiobalance_percent_average{name!="global"}) < 99
+  #   for: 1m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "RDS EBS IO balance for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 99%."
+  #     description: "RDS EBS IO balance for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 99%."
+
+  # - alert: rds_high_ebs_byte_balance
+  #   expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsbyte_balance_percent_average{name!="global"}) < 99
+  #   for: 1m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "RDS EBS Byte balance for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 99%."
+  #     description: "RDS EBS Byte balance for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 99%."
+
+  - alert: rds_replica_lag
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_replica_lag_average{name!="global"}) > 10
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }}s replication lag is greater than 10 seconds." 
+      description: "DS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }}s replication lag is greater than 10 seconds."
+
+  - alert: rds_free_storage_space
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_free_storage_space_average{name!="global"})/(1024*1024*1024) < 30
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }}GB has less than 30GB free storage space"
+      description: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }}  {{ $value }}GB has less than 30GB free storage space"
+      # summary: "RDS for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ {{ $value/(1024*1024*1024) }} }}GB has less than 30GB free storage space"
+      # description: "RDS for {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }}  {{ {{ $value/(1024*1024*1024) }} }}GB has less than 30GB free storage space"
+
+  - alert: rds_high_cpu_utilization
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_cpuutilization_average{name!="global"}) > 80
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} has more than 80% CPU utilization {{ $value }}%"
+      description: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} has more than 80% CPU utilization {{ $value }}%"
+
+  - alert: rds_low_free_memory
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_freeable_memory_average{name!="global"})/1024/1024 < 128
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} used {{ $value }}Mi has less than 128Mi free memory."
+      description: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} used {{ $value }}Mi has less than 128Mi free memory."
+
+  - alert: rds_high_disk_queue_depth
+    expr: |
+      sum by (name, dimension_DBInstanceIdentifier, service, environments)
+      (
+        aws_rds_disk_queue_depth_average{name!="global"}
+      ) > 50
+    for: 5m
+    labels:
+      severity: critical
+      service: RDS
+      team: SRE
+    annotations:
+      summary: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }} average high disk queue depth detected more than 50 for the past 5 minutes."
+      description: "RDS for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} {{ $value }} average high disk queue depth detected more than 50 for the past 5 minutes."
+
+  # - alert: rds_high_disk_queue_depth
+  #   expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_disk_queue_depth_average{name!="global"}) > 50
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "RDS EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+  #     description: "RDS EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+
+  - alert: rds_high_ebs_io_balance
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsiobalance_percent_average{name!="global"}) < 50
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+      description: "RDS EBS IO balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+
+  - alert: rds_high_ebs_byte_balance
+    expr: sum by (name, dimension_DBInstanceIdentifier,service,environments) (aws_rds_ebsbyte_balance_percent_average{name!="global"}) < 50
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS EBS Byte balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+      description: "RDS EBS Byte balance {{ $value }}% for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} less than 50%."
+
+
+  - alert: rds_high_transaction_logs_disk_usage
+    expr: (sum by (name, dimension_DBInstanceIdentifier,service,environments)  (aws_rds_transaction_logs_disk_usage_average{name!~"global"}) * 0.000000001) > 50
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RDS high transaction logs disk usage {{ $value }}GB for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} more than 50GB."
+      description: "RDS high transaction logs disk usage {{ $value }}GB for instance {{ $labels.dimension_DBInstanceIdentifier }} environments {{ $labels.environments }} more than 50GB."
+
+#- name: HTTP-Reponse-Time
+#  rules:
+#  - alert: service_reponse_time_high_3s
+#    expr: avg_over_time(probe_duration_seconds[3m]) > 3
+#    for: 3m
+#    labels:
+#      severity: warning
+#    annotations:
+#      summary: "HTTP Response Time : {{ $value }} for URL {{ $labels.instance }}."
+#      description: "{{ $labels.instance }} of job {{ $labels.job }}" 
+
+
+- name: SQS-Queue-Status
+  rules:
+  - alert: sqs_number_of_messages
+    expr: (sqs_approximatenumberofmessages{} > 100)
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "The approximate number of visible messages is {{ $value }} in a queue {{ $labels.queue }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "The approximate number of visible messages in a queue {{ $labels.queue }} more than 100 messages"
+
+- name: nats-alerts
+  rules:
+  - alert: nats_consumer_pending_mssages
+    expr: (sum by (consumer_name, server_id, environments, service, stream_name, ip_host) (jetstream_consumer_num_pending) > 100)
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Nats consumer {{ $labels.consumer_name }} and stream {{ $labels.stream_name }} pending is {{ $value }} messages too high on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Nats consumer {{ $labels.consumer_name }} and stream {{ $labels.stream_name }} pending is {{ $value }} messages too high on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+
+  - alert: nats_jetstream_storage_usage
+    expr: ((sum(gnatsd_varz_jetstream_stats_storage{}) by (consumer_name,server_id,environments,service)) / (sum(gnatsd_varz_jetstream_config_max_storage{}) by (consumer_name,server_id,environments,service)) * 100) > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Nats jetstream storage usage more than 90% ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Nats jetstream storage usage more than 90% ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+
+  - alert: nats_high_connections
+    expr: gnatsd_varz_connections > 200
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Nats jetstream more than 200 connections ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Nats jetstream more than 200 connections ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+
+  - alert: nats_high_subscriptions
+    expr: gnatsd_connz_subscriptions > 200
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Nats jetstream more than 200 subscriptions ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+      description: "Nats jetstream more than 200 subscriptions ({{ $value }}) on {{ $labels.server_id }} {{ $labels.service }} {{ $labels.environments }}"
+
+- name: OpenSearch-Alerts
+  rules:
+  - alert: OpenSearch_High_Disk_Usage
+    expr: (1 - (elasticsearch_filesystem_data_available_bytes{}/elasticsearch_filesystem_data_size_bytes{})) * 100  > 80
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OpenSearch cluster {{ $labels.cluster }} disk usage ({{ $value }}) more than 80%"
+      description: "OpenSearch cluster {{ $labels.cluster }} disk usagen ({{ $value }}) more than 80%"
+
+  - alert: OpenSearch_High_CPU_Usage
+    expr: irate(elasticsearch_process_cpu_percent{}[5m])  > 80
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OpenSearch cluster {{ $labels.cluster }} CPU usage more than 80%"
+      description: "OpenSearch cluster {{ $labels.cluster }} CPU usage more than 80%"
+
+- name: RabbitMQ-Alerts
+  rules:
+  - alert: rabbitmq_out_of_memory
+    expr: (rabbitmq_node_mem_used{} / (rabbitmq_node_mem_limit{} * 100) > 80)
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RabbitMQ out of memory on instance {{ $labels.host_name }} environments {{ $labels.environments }}, memory available less than 20%"
+      description: "RabbitMQ out of memory on instance {{ $labels.host_name }} environments {{ $labels.environments }}, memory available less than 20%"
+
+  - alert: Rabbitmq_Too_Many_Connections
+    expr: rabbitmq_connectionsTotal{} > 1000
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq too many connections instance {{ $labels.instance }}"
+      description: "RabbitMQ instance has {{ $value }} too many connections more than 1000"
+
+  - alert: Rabbitmq_Down
+    expr: rabbitmq_up == 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "RabbitMQ instance {{ $labels.host_name }} of the {{ $labels.service }} is down"
+      description: "RabbitMQ instance {{ $labels.host_name }} of the {{ $labels.service }} is down"
+
+  - alert: Rabbitmq_Too_Many_Messages_InQueue
+    expr: rabbitmq_queue_messages_ready{} > 2000
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq Queue {{ $labels.queue }} instance {{ $labels.instance }} is filling up (> 2000 msgs) {{ $value }} on {{ $labels.cluster }}"
+      description: "Rabbitmq Queue {{ $labels.queue }} instance {{ $labels.instance }} is filling up (> 2000 msgs) {{ $value }} on {{ $labels.cluster }}"
+
+- name: Redis-Alerts
+  rules:
+  - alert: redis_down
+    expr: redis_up{} == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis instance {{ $labels.instance }} {{ $labels.elasticache_cluster }} is down"
+      description: "Redis instance {{ $labels.instance }} {{ $labels.elasticache_cluster }} is down"
+
+  - alert: Redis_Key
+    expr: redis_key_size{} > 2000
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis key {{ $labels.key }} more than 2000 ({{ $value }}) on {{ $labels.elasticache_cluster }}"
+      description: "Redis key {{ $labels.key }} more than 2000 ({{ $value }}) on {{ $labels.elasticache_cluster }}"
+
+  - alert: redis_out_of_system_memory
+    expr: (redis_memory_used_bytes{} / redis_total_system_memory_bytes{} * 100 > 70)
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis out of system memory instance {{ $labels.instance }}"
+      description: "Redis is running out of system memory (> 70%) {{ $value }}"
+
+  - alert: redis_out_of_max_memory
+    expr: (redis_memory_used_bytes{} / redis_memory_max_bytes{} * 100 > 70)
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis is running out of configured max memory (> 70%) instance {{ $labels.instance }} {{ $value }}"
+      description: "Redis is running out of configured max memory (> 70%) instance {{ $labels.instance }} {{ $value }}"
+
+  - alert: redis_too_many_connections
+    expr: redis_connected_clients{} > 1000
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis has too many connections {{ $value }} on instance {{ $labels.instance }} environments {{ $labels.environments }} more than 1000"
+      description: "Redis has too many connections {{ $value }} on instance {{ $labels.instance }} environments {{ $labels.environments }} more than 1000}"
+
+
+
+# - name: Jenkins-Pipelien-Alerts
+#   rules:
+# # * RUNNING  -1 true  - The build had no errors.
+#   # * SUCCESS   0 true  - The build had no errors.
+#   # * UNSTABLE  1 true  - The build had some errors but they were not fatal. For example, some tests failed.
+#   # * FAILURE   2 false - The build had a fatal error.
+#   # * NOT_BUILT 3 false - The module was not built.
+#   # * ABORTED   4 false - The build was manually aborted.
+#   - alert: JenkinsLastBuildFailed
+#     expr: default_jenkins_builds_last_build_result_ordinal{} >=2
+#     for: 0m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: Jenkins last build failed instance {{ $labels.instance }}
+#       description: "Last build failed: {{$labels.jenkins_job}}. Failed build for job {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+#   - alert: Jenkins_Build_Running
+#     expr: default_jenkins_builds_last_build_result_ordinal{} == -1
+#     for: 0m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: Jenkins job build running instance {{ $labels.instance }}
+#       description: "Jenkins job build running {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+  # - alert: Jenkins_Build_Succesfuly
+  #   expr: default_jenkins_builds_last_build_result_ordinal{} == 0
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins job build succesfuly instance {{ $labels.instance }}
+  #     description: "Jenkins job build succesfuly {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+
+  # - alert: Jenkins_Last_Build_Failed
+  #   expr: default_jenkins_builds_last_build_result_ordinal{} >=2
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins last build failed instance {{ $labels.instance }}
+  #     description: "Last build failed: {{$labels.jenkins_job}}. Failed build for job {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+  # - alert: Jenkins_Build_Running
+  #   expr: default_jenkins_builds_last_build_result_ordinal{} == -1
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins job build running instance {{ $labels.instance }}
+  #     description: "Jenkins job build running {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+  # - alert: Jenkins_Last_Build_Failed
+  #   expr: default_jenkins_builds_last_build_result_ordinal{jenkins_job=~"lg-k8s.*"} >=2
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins last build failed instance {{ $labels.instance }}
+  #     description: "Last build failed: {{$labels.jenkins_job}}. Failed build for job {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+  # - alert: Jenkins_Build_Running
+  #   expr: default_jenkins_builds_last_build_result_ordinal{jenkins_job=~"lg-k8s.*"} == -1
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins job build running instance {{ $labels.instance }}
+  #     description: "Jenkins job build running {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+
+  # - alert: Jenkins_Last_Build_Failed
+  #   expr: default_jenkins_builds_last_build_result_ordinal{} >=2
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins last build failed instance {{ $labels.instance }}
+  #     description: "Last build failed: {{$labels.jenkins_job}}. Failed build for job {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
+
+  # - alert: Jenkins_Build_Running
+  #   expr: default_jenkins_builds_last_build_result_ordinal{} == -1
+  #   for: 0m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: Jenkins job build running instance {{ $labels.instance }}
+  #     description: "Jenkins job build running {{$labels.jenkins_job}} on {{$labels.instance}} {{$labels.environments}} {{$labels.service}}"
