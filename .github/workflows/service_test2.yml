@@ -1,21 +1,23 @@
 on:
   workflow_dispatch:
     inputs:
-      service_test1:
-        description: 'service_test1'
-        type: boolean
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
         required: false
-        default: false
-      service_test2:
-        description: 'service_test2'
         type: boolean
-        required: false
-        default: false
-      service_test3:
-        description: "service_test3"
-        type: boolean
-        required: false
-        default: false
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
       service_test4:
         description: 'service_test1'
         type: boolean
@@ -66,6 +68,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.6
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
 
       - name: Pre-check step, build & deploy service to the production environments
         if: ${{ github.event.ref == 'refs/heads/master' }}
@@ -105,6 +115,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.6
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
 
       - name: Pre-check step, build & deploy service to the production environments
         if: ${{ github.event.ref == 'refs/heads/develop' }}
@@ -144,6 +162,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.6
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
 
       - name: Pre-check step, build & deploy service to the production environments
         if: ${{ github.event.ref == 'refs/heads/staging' }}
