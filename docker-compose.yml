@@ -39,7 +39,7 @@ services:
       logging_jobname: "containerlogs"
 
   victoriametrics:
-    image: victoriametrics/victoria-metrics:v1.101.0
+    image: victoriametrics/victoria-metrics:v1.111.0
     container_name: victoriametrics
     volumes:
       - ./victoria-metrics-data:/victoria-metrics-data
@@ -97,7 +97,7 @@ services:
       logging_jobname: "containerlogs"
 
   prometheus:
-    image: prom/prometheus:v2.53.0
+    image: prom/prometheus:v3.1.0
     container_name: prometheus
     volumes:
       - ./prometheus:/etc/prometheus
@@ -187,7 +187,7 @@ services:
       logging_jobname: "containerlogs"
 
   alertmanager:
-    image: prom/alertmanager:v0.27.0
+    image: prom/alertmanager:v0.28.0
     container_name: alertmanager
     volumes:
       - ./alertmanager:/etc/alertmanager
